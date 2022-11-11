@@ -58,7 +58,7 @@ public interface ISearchView extends IView {
      * 获取搜索内容EditText
      * @return
      */
-    EditText getEdtContent();
+    EditText getEditContent();
 
 
     SearchBookAdapter getSearchBookAdapter();

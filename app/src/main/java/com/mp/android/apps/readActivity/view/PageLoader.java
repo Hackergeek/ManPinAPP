@@ -18,7 +18,7 @@ import com.mp.android.apps.readActivity.ReadActivity;
 import com.mp.android.apps.readActivity.local.BookRepository;
 import com.mp.android.apps.readActivity.local.ReadSettingManager;
 import com.mp.android.apps.readActivity.bean.BookRecordBean;
-import com.mp.android.apps.readActivity.bean.CollBookBean;
+import com.mp.android.apps.readActivity.bean.CollectionBookBean;
 import com.mp.android.apps.readActivity.utils.Constant;
 import com.mp.android.apps.readActivity.utils.IOUtils;
 import com.mp.android.apps.readActivity.utils.RxUtils;
@@ -59,7 +59,7 @@ public abstract class PageLoader {
     // 当前章节列表
     protected List<TxtChapter> mChapterList;
     // 书本对象
-    protected CollBookBean mCollBook;
+    protected CollectionBookBean mCollBook;
     // 监听器
     protected OnPageChangeListener mPageChangeListener;
 
@@ -146,7 +146,7 @@ public abstract class PageLoader {
     private int mLastChapterPos = 0;
 
     /*****************************init params*******************************/
-    public PageLoader(PageView pageView, CollBookBean collBook) {
+    public PageLoader(PageView pageView, CollectionBookBean collBook) {
         mPageView = pageView;
         mContext = pageView.getContext();
         mCollBook = collBook;
@@ -507,7 +507,7 @@ public abstract class PageLoader {
      *
      * @return
      */
-    public CollBookBean getCollBook() {
+    public CollectionBookBean getCollBook() {
         return mCollBook;
     }
 

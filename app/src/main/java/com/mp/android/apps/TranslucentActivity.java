@@ -13,8 +13,6 @@ public class TranslucentActivity extends Activity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent serviceIntent = new Intent(this, DownloadService.class);
-//        serviceIntent.setAction("com.mp.android.apps.monkeybook.service.DownloadService_action");
-//        serviceIntent.setPackage(getPackageName());
         startService(serviceIntent);
         finish();
     }

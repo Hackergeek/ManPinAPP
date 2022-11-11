@@ -25,7 +25,7 @@ import com.monke.mprogressbar.MHorProgressBar;
 import com.monke.mprogressbar.OnProgressListener;
 import com.mp.android.apps.readActivity.bean.BookChapterBean;
 import com.mp.android.apps.readActivity.bean.BookRecordBean;
-import com.mp.android.apps.readActivity.bean.CollBookBean;
+import com.mp.android.apps.readActivity.bean.CollectionBookBean;
 import com.mp.android.apps.readActivity.local.BookRepository;
 import com.mp.android.apps.readActivity.local.DaoDbHelper;
 import com.mp.android.apps.readActivity.utils.Constant;
@@ -44,7 +44,7 @@ public class BookShelfAdapter extends RefreshRecyclerViewAdapter {
 
     private final long DURANIMITEM = 130;   //item动画启动间隔
 
-    private List<CollBookBean> books;
+    private List<CollectionBookBean> books;
 
     private Boolean needAnim = true;
 
@@ -53,9 +53,9 @@ public class BookShelfAdapter extends RefreshRecyclerViewAdapter {
     public interface OnItemClickListener {
         void toSearch();
 
-        void onClick(CollBookBean collBookBean, int index);
+        void onClick(CollectionBookBean collBookBean, int index);
 
-        void onLongClick(View view, CollBookBean bookShelfBean, int index);
+        void onLongClick(View view, CollectionBookBean bookShelfBean, int index);
     }
 
     public BookShelfAdapter() {
@@ -450,7 +450,7 @@ public class BookShelfAdapter extends RefreshRecyclerViewAdapter {
      * 修改数据源
      * @param newDatas
      */
-    public synchronized void replaceAll(List<CollBookBean> newDatas) {
+    public synchronized void replaceAll(List<CollectionBookBean> newDatas) {
         books.clear();
         if (null != newDatas && newDatas.size() > 0) {
             books.addAll(newDatas);
@@ -477,14 +477,14 @@ public class BookShelfAdapter extends RefreshRecyclerViewAdapter {
                         temp = j;
                     }
                 }
-                CollBookBean tempBookShelfBean = books.get(i);
+                CollectionBookBean tempBookShelfBean = books.get(i);
                 books.set(i, books.get(temp));
                 books.set(temp, tempBookShelfBean);
             }
         }
     }
 
-    public List<CollBookBean> getBooks() {
+    public List<CollectionBookBean> getBooks() {
         return books;
     }
 }

@@ -9,20 +9,18 @@ import android.widget.TextView;
 
 import androidx.viewpager.widget.ViewPager;
 
-import com.google.android.material.tabs.TabLayout;
 import com.mp.android.apps.R;
 import com.mp.android.apps.main.bookR.adapter.MybookViewPagerAdapter;
 import com.mp.android.apps.main.bookR.presenter.IBookRFragmentPresenter;
 import com.mp.android.apps.main.bookR.presenter.impl.BookRFragmentPresenterImpl;
 import com.mp.android.apps.main.bookR.view.IBookRFragmentView;
-import com.mp.android.apps.basemvplib.impl.BaseActivity;
 import com.mp.android.apps.basemvplib.impl.BaseFragment;
 import com.mp.android.apps.book.view.impl.SearchActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class BookRFragment extends BaseFragment<IBookRFragmentPresenter> implements IBookRFragmentView, View.OnClickListener {
+public class BookStoreFragment extends BaseFragment<IBookRFragmentPresenter> implements IBookRFragmentView, View.OnClickListener {
     public TextView layoutRecommend;
     public TextView layoutMan;
     public TextView layoutWomen;
@@ -33,28 +31,28 @@ public class BookRFragment extends BaseFragment<IBookRFragmentPresenter> impleme
     /**
      * 推荐fragment
      */
-    private BookRRecommendFImpl recommendFagment;
+    private BookRecommendFragment recommendFragment;
 
     /**
      * manFragment 男士专区
      */
-    private BookRManFImpl manFragment;
+    private BookManFragment manFragment;
 
     /**
-     * womanFragmen 女士专区
+     * womanFragment 女士专区
      */
-    private BookRWomanFImpl womanFragmen;
+    private BookWomanFragmentImpl womanFragment;
 
-    private static final int RECOMMENDFRAGMENT = 0;
-    private static final int MANFRAGMENT = 1;
-    private static final int WOMANFRAGMENT = 2;
+    private static final int RECOMMEND_FRAGMENT = 0;
+    private static final int MAN_FRAGMENT = 1;
+    private static final int WOMAN_FRAGMENT = 2;
 
     @Override
     protected void initData() {
         sourceList = new ArrayList<>();
-        recommendFagment = new BookRRecommendFImpl();
-        manFragment = new BookRManFImpl();
-        womanFragmen = new BookRWomanFImpl();
+        recommendFragment = new BookRecommendFragment();
+        manFragment = new BookManFragment();
+        womanFragment = new BookWomanFragmentImpl();
     }
 
     @Override
@@ -75,19 +73,17 @@ public class BookRFragment extends BaseFragment<IBookRFragmentPresenter> impleme
 
         searchImage = view.findViewById(R.id.bookr_fragment_search);
         searchImage.setOnClickListener(this);
-
     }
 
     @Override
     protected void bindEvent() {
         super.bindEvent();
-        sourceList.add(recommendFagment);
+        sourceList.add(recommendFragment);
         sourceList.add(manFragment);
-        sourceList.add(womanFragmen);
+        sourceList.add(womanFragment);
         viewPager.setAdapter(new MybookViewPagerAdapter(getActivity().getSupportFragmentManager(), sourceList));
         viewPager.setOffscreenPageLimit(3);
         viewPager.addOnPageChangeListener(new MybookViewPageChangeListener());
-
     }
 
     @Override
@@ -100,13 +96,13 @@ public class BookRFragment extends BaseFragment<IBookRFragmentPresenter> impleme
         int id = v.getId();
         switch (id) {
             case R.id.mp_bookr_layout_recommend:
-                viewPager.setCurrentItem(RECOMMENDFRAGMENT);
+                viewPager.setCurrentItem(RECOMMEND_FRAGMENT);
                 break;
             case R.id.mp_bookr_layout_men:
-                viewPager.setCurrentItem(MANFRAGMENT);
+                viewPager.setCurrentItem(MAN_FRAGMENT);
                 break;
             case R.id.mp_bookr_layout_women:
-                viewPager.setCurrentItem(WOMANFRAGMENT);
+                viewPager.setCurrentItem(WOMAN_FRAGMENT);
                 break;
             case R.id.bookr_fragment_search:
                 Intent searchIntent = new Intent(getActivity(), SearchActivity.class);
@@ -126,13 +122,13 @@ public class BookRFragment extends BaseFragment<IBookRFragmentPresenter> impleme
         @Override
         public void onPageSelected(int position) {
             switch (position) {
-                case RECOMMENDFRAGMENT:
+                case RECOMMEND_FRAGMENT:
                     setSelectPageTextSize(layoutRecommend);
                     break;
-                case MANFRAGMENT:
+                case MAN_FRAGMENT:
                     setSelectPageTextSize(layoutMan);
                     break;
-                case WOMANFRAGMENT:
+                case WOMAN_FRAGMENT:
                     setSelectPageTextSize(layoutWomen);
                     break;
                 default:

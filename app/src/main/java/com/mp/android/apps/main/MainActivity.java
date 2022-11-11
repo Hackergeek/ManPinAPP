@@ -4,20 +4,21 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentTransaction;
+
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.hwangjr.rxbus.RxBus;
 import com.mp.android.apps.R;
 import com.mp.android.apps.StoryboardActivity;
 import com.mp.android.apps.login.utils.LoginManager;
 import com.mp.android.apps.main.bookR.view.impl.BookCollectionFragment;
-import com.mp.android.apps.main.bookR.view.impl.BookRFragment;
+import com.mp.android.apps.main.bookR.view.impl.BookStoreFragment;
 import com.mp.android.apps.main.home.view.impl.MainFragment;
 import com.mp.android.apps.main.personal.PersonFragment;
 import com.mp.android.apps.main.home.view.MyImageTextView;
@@ -29,7 +30,7 @@ public class MainActivity extends StoryboardActivity implements View.OnClickList
     MainFragment mainFragment;
     PersonFragment personFragment;
     BookCollectionFragment bookCollectionFragment;
-    BookRFragment mBookRFragment;
+    BookStoreFragment mBookStoreFragment;
 
     MyImageTextView zhuye;
     MyImageTextView shujia;
@@ -38,7 +39,7 @@ public class MainActivity extends StoryboardActivity implements View.OnClickList
     private FrameLayout flWarn;
     private ImageView flWarnClose;
 
-    private void hidenFragment(FragmentTransaction transaction) {
+    private void hideFragment(FragmentTransaction transaction) {
         if (mainFragment != null) {
             transaction.hide(mainFragment);
         }
@@ -48,14 +49,14 @@ public class MainActivity extends StoryboardActivity implements View.OnClickList
         if (bookCollectionFragment != null) {
             transaction.hide(bookCollectionFragment);
         }
-        if (mBookRFragment!=null){
-            transaction.hide(mBookRFragment);
+        if (mBookStoreFragment != null) {
+            transaction.hide(mBookStoreFragment);
         }
     }
 
     private void showFragment(BaseFragment fragment) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        hidenFragment(transaction);
+        hideFragment(transaction);
         if (fragment != null) {
             if (fragment.isAdded()) {
                 transaction.show(fragment);
@@ -75,7 +76,7 @@ public class MainActivity extends StoryboardActivity implements View.OnClickList
         mainFragment = new MainFragment();
         personFragment = new PersonFragment();
         bookCollectionFragment = new BookCollectionFragment();
-        mBookRFragment=new BookRFragment();
+        mBookStoreFragment = new BookStoreFragment();
         showFragment(mainFragment);
         initViews();
     }
@@ -121,32 +122,11 @@ public class MainActivity extends StoryboardActivity implements View.OnClickList
         } else {
             finishAffinity();
             //基于任务管理器 退出应用
-            ActivityManager am = (ActivityManager)getSystemService (Context.ACTIVITY_SERVICE);
+            ActivityManager am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
             am.killBackgroundProcesses(getPackageName());
             System.exit(0);
         }
     }
-
-//    public void gotoExplore(String toExplore) {
-//        Intent intent = new Intent(this, ExploreSquareActivity.class);
-//        intent.putExtra("toExplore", toExplore);
-//        Acp.getInstance(this).request(new AcpOptions.Builder()
-//                .setPermissions(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION).build(), new AcpListener() {
-//            @Override
-//            public void onGranted() {
-//                if (LoginManager.getInstance().checkLoginInfo()) {
-//                    startActivity(intent);
-//                } else {
-//                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-//                    startActivityForResult(intent, EXPLORESQUARE_LOGIN);
-//                }
-//            }
-//
-//            @Override
-//            public void onDenied(List<String> permissions) {
-//            }
-//        });
-//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -182,10 +162,11 @@ public class MainActivity extends StoryboardActivity implements View.OnClickList
         showFragment(bookCollectionFragment);
     }
 
-    public void showBookStore(){
+    public void showBookStore() {
         changeNavImages(R.id.quanzi);
-        showFragment(mBookRFragment);
+        showFragment(mBookStoreFragment);
     }
+
     private void changeNavImages(int id) {
         zhuye.setImgResource(R.drawable.zhuye);
         shujia.setImgResource(R.drawable.shujia);

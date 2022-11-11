@@ -81,25 +81,16 @@ public class BookSourceActivity extends BaseActivity<BookSourcePresenterImpl> im
     @Override
     protected void bindEvent() {
         super.bindEvent();
-        ivBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                BookSourceActivity.super.onBackPressed();
+        ivBack.setOnClickListener(v -> BookSourceActivity.super.onBackPressed());
+        tvRightBtn.setOnClickListener(v -> {
+            if (sourceBeans != null && sourceBeans.size() > 0) {
+                for (BookSourceBean bookSourceBean : sourceBeans) {
+                    SharedPreferenceUtil.put(getContext(), bookSourceBean.getBookSourceAddress(), true);
+                }
             }
-        });
-        tvRightBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (sourceBeans != null && sourceBeans.size() > 0) {
-                    for (BookSourceBean bookSourceBean : sourceBeans) {
-                        SharedPreferenceUtil.put(getContext(), bookSourceBean.getBookSourceAddress(), true);
-                    }
-                }
-                if (sourceBeans != null) {
-                    bookSourceAdapter.setSourceBeanList(mPresenter.handleSource(sourceBeans));
-                    bookSourceAdapter.notifyDataSetChanged();
-                }
-
+            if (sourceBeans != null) {
+                bookSourceAdapter.setSourceBeanList(mPresenter.handleSource(sourceBeans));
+                bookSourceAdapter.notifyDataSetChanged();
             }
         });
     }

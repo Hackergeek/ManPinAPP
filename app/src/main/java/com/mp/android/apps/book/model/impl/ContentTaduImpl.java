@@ -4,20 +4,17 @@ package com.mp.android.apps.book.model.impl;
 
 import com.google.android.apps.photolab.storyboard.download.MD5Utils;
 import com.mp.android.apps.book.base.MBaseModelImpl;
-import com.mp.android.apps.book.base.observer.SimpleObserver;
 import com.mp.android.apps.book.bean.SearchBookBean;
-import com.mp.android.apps.book.common.api.ITaduAPI;
 import com.mp.android.apps.book.common.api.ITaduAPI;
 import com.mp.android.apps.book.model.IReaderBookModel;
 import com.mp.android.apps.book.model.ObtainBookInfoUtils;
 import com.mp.android.apps.readActivity.bean.BookChapterBean;
 import com.mp.android.apps.readActivity.bean.ChapterInfoBean;
-import com.mp.android.apps.readActivity.bean.CollBookBean;
+import com.mp.android.apps.readActivity.bean.CollectionBookBean;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
@@ -29,16 +26,11 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.ObservableSource;
-import io.reactivex.Scheduler;
 import io.reactivex.Single;
 import io.reactivex.SingleEmitter;
-import io.reactivex.SingleObserver;
 import io.reactivex.SingleOnSubscribe;
 import io.reactivex.SingleSource;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * 塔读小说
@@ -118,20 +110,20 @@ public class ContentTaduImpl extends MBaseModelImpl implements IReaderBookModel 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////
     @Override
-    public Observable<CollBookBean> getBookInfo(CollBookBean collBookBean) {
-        return getRetrofitObject(TAG).create(ITaduAPI.class).getBookInfo(collBookBean.get_id().replace(TAG, "")).flatMap(new Function<String, ObservableSource<CollBookBean>>() {
+    public Observable<CollectionBookBean> getBookInfo(CollectionBookBean collBookBean) {
+        return getRetrofitObject(TAG).create(ITaduAPI.class).getBookInfo(collBookBean.get_id().replace(TAG, "")).flatMap(new Function<String, ObservableSource<CollectionBookBean>>() {
             @Override
-            public ObservableSource<CollBookBean> apply(String s) throws Exception {
+            public ObservableSource<CollectionBookBean> apply(String s) throws Exception {
                 return analyBookInfo(s, collBookBean);
             }
         });
 
     }
 
-    private Observable<CollBookBean> analyBookInfo(final String s, final CollBookBean collBookBean) {
-        return Observable.create(new ObservableOnSubscribe<CollBookBean>() {
+    private Observable<CollectionBookBean> analyBookInfo(final String s, final CollectionBookBean collBookBean) {
+        return Observable.create(new ObservableOnSubscribe<CollectionBookBean>() {
             @Override
-            public void subscribe(ObservableEmitter<CollBookBean> e) throws Exception {
+            public void subscribe(ObservableEmitter<CollectionBookBean> e) throws Exception {
                 collBookBean.setBookTag(TAG);
                 Document doc = Jsoup.parse(s);
 
@@ -173,7 +165,7 @@ public class ContentTaduImpl extends MBaseModelImpl implements IReaderBookModel 
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////    @Override
-    public Single<List<BookChapterBean>> getBookChapters(CollBookBean collBookBean) {
+    public Single<List<BookChapterBean>> getBookChapters(CollectionBookBean collBookBean) {
         String chapterUrl = collBookBean.getBookChapterUrl().replace("book", "book/catalogue");
 
         return getRetrofitObject(TAG).create(ITaduAPI.class).getChapterLists(chapterUrl)
@@ -191,7 +183,7 @@ public class ContentTaduImpl extends MBaseModelImpl implements IReaderBookModel 
                 });
     }
 
-    private List<BookChapterBean> analyChapterlist(String s, CollBookBean collBookBean) {
+    private List<BookChapterBean> analyChapterlist(String s, CollectionBookBean collBookBean) {
         Document doc = Jsoup.parse(s);
         Elements chapterlist = doc.getElementsByClass("chapter").get(0).getElementsByTag("a");
         List<BookChapterBean> chapterBeans = new ArrayList<BookChapterBean>();

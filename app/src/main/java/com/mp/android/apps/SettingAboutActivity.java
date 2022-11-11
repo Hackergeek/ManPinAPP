@@ -1,8 +1,6 @@
 package com.mp.android.apps;
 
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -11,16 +9,13 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.core.graphics.drawable.RoundedBitmapDrawable;
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.libraries.social.licenses.LicenseMenuActivity;
-import com.mp.android.apps.login.utils.LoginManager;
 import com.mp.android.apps.utils.GeneralTools;
 import com.tencent.bugly.beta.Beta;
 
@@ -42,7 +37,7 @@ public class SettingAboutActivity extends StoryboardActivity implements View.OnC
      */
     private ImageView titleBackSetting;
     private RelativeLayout kaiyuandizhi;
-    private TextView manpinVersion;
+    private TextView version;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -61,9 +56,8 @@ public class SettingAboutActivity extends StoryboardActivity implements View.OnC
         iconImage = findViewById(R.id.iconImage);
         titleBackSetting = findViewById(R.id.title_back_setting);
         kaiyuandizhi = findViewById(R.id.kaiyuandizhi);
-        manpinVersion = findViewById(R.id.manpin_version);
-        manpinVersion.setText(GeneralTools.APP_VERSION);
-
+        version = findViewById(R.id.manpin_version);
+        version.setText(GeneralTools.APP_VERSION);
         rectRoundBitmap();
     }
 
@@ -119,7 +113,4 @@ public class SettingAboutActivity extends StoryboardActivity implements View.OnC
         //设置显示图片
         iconImage.setImageDrawable(roundImg);
     }
-
-
-
 }

@@ -31,13 +31,12 @@ import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
 
 import java.util.List;
-import java.util.Objects;
 
 
-public class BookRRecommendFImpl extends BaseFragment<IBookRRecommendFPresenter> implements IBookRRecommendFView, OnHomeAdapterClickListener {
+public class BookRecommendFragment extends BaseFragment<IBookRRecommendFPresenter> implements IBookRRecommendFView, OnHomeAdapterClickListener {
     private RecyclerView recommendRecyclerView;
     private BookRRecommendFRecyclerAdapter recommendRecyclerAdapter;
-    private SmartRefreshLayout bookRrefreshLayout;
+    private SmartRefreshLayout bookRefreshLayout;
 
     @Override
     protected void initData() {
@@ -48,9 +47,9 @@ public class BookRRecommendFImpl extends BaseFragment<IBookRRecommendFPresenter>
     protected void bindView() {
         super.bindView();
         recommendRecyclerView = view.findViewById(R.id.mp_bookr_recommend_recyclerview);
-        bookRrefreshLayout = view.findViewById(R.id.bookr_recommend_refreshLayout);
-        bookRrefreshLayout.setRefreshFooter(new ClassicsFooter(requireContext()));
-        bookRrefreshLayout.setRefreshHeader(new ClassicsHeader(requireContext()));
+        bookRefreshLayout = view.findViewById(R.id.bookr_recommend_refreshLayout);
+        bookRefreshLayout.setRefreshFooter(new ClassicsFooter(requireContext()));
+        bookRefreshLayout.setRefreshHeader(new ClassicsHeader(requireContext()));
     }
 
     @Override
@@ -75,14 +74,14 @@ public class BookRRecommendFImpl extends BaseFragment<IBookRRecommendFPresenter>
 
     @Override
     public void onItemClickListener(View view) {
-        int id=view.getId();
-        Intent intent=new Intent(getActivity(), BookRankListActivity.class);
-        switch (id){
+        int id = view.getId();
+        Intent intent = new Intent(getActivity(), BookRankListActivity.class);
+        switch (id) {
             case R.id.mp_bookr_recommend_category:
-                intent.putExtra("rankRouteUrl",BookRankListActivity.RANKRECOM);
+                intent.putExtra("rankRouteUrl", BookRankListActivity.RANKRECOM);
                 break;
             case R.id.mp_bookr_recommend_ranking:
-                intent.putExtra("rankRouteUrl",BookRankListActivity.RANKVIPCOLLECT);
+                intent.putExtra("rankRouteUrl", BookRankListActivity.RANKVIPCOLLECT);
                 break;
         }
 
@@ -128,19 +127,9 @@ public class BookRRecommendFImpl extends BaseFragment<IBookRRecommendFPresenter>
             recommendRecyclerAdapter.setContentList(contentList);
             recommendRecyclerAdapter.notifyDataSetChanged();
         }
-        bookRrefreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
-            @Override
-            public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
-                mPresenter.getNextPageContent(recommendRecyclerAdapter.getmContentListPage() + 1);
-            }
-        });
-        bookRrefreshLayout.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-                mPresenter.initBookRRcommendData();
-            }
-        });
-        bookRrefreshLayout.finishRefresh();
+        bookRefreshLayout.setOnLoadMoreListener(refreshLayout -> mPresenter.getNextPageContent(recommendRecyclerAdapter.getmContentListPage() + 1));
+        bookRefreshLayout.setOnRefreshListener(refreshLayout -> mPresenter.initBookRRcommendData());
+        bookRefreshLayout.finishRefresh();
     }
 
     @Override
@@ -148,9 +137,7 @@ public class BookRRecommendFImpl extends BaseFragment<IBookRRecommendFPresenter>
         if (recommendRecyclerAdapter != null && recommendList != null) {
             recommendRecyclerAdapter.addRecommendList(recommendList);
         }
-
-        bookRrefreshLayout.finishLoadMore();
+        bookRefreshLayout.finishLoadMore();
     }
-
 
 }

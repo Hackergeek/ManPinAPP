@@ -2,6 +2,7 @@
 package com.mp.android.apps.book.view.adapter;
 
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -99,19 +100,13 @@ public class SearchBookAdapter extends RefreshRecyclerViewAdapter {
             ((Viewholder) holder).tvAddShelf.setEnabled(true);
         }
 
-        ((Viewholder) holder).flContent.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (itemClickListener != null)
-                    itemClickListener.clickItem(((Viewholder) holder).ivCover, position, searchBooks.get(position));
-            }
+        ((Viewholder) holder).flContent.setOnClickListener(v -> {
+            if (itemClickListener != null)
+                itemClickListener.clickItem(((Viewholder) holder).ivCover, position, searchBooks.get(position));
         });
-        ((Viewholder) holder).tvAddShelf.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (itemClickListener != null)
-                    itemClickListener.clickAddShelf(((Viewholder) holder).tvAddShelf, position, searchBooks.get(position));
-            }
+        ((Viewholder) holder).tvAddShelf.setOnClickListener(v -> {
+            if (itemClickListener != null)
+                itemClickListener.clickAddShelf(((Viewholder) holder).tvAddShelf, position, searchBooks.get(position));
         });
     }
 
@@ -156,26 +151,22 @@ public class SearchBookAdapter extends RefreshRecyclerViewAdapter {
         this.itemClickListener = itemClickListener;
     }
 
-    public void addAll(List<SearchBookBean> newDatas,String content) {
-        if(newDatas!=null && newDatas.size()>0){
-
-            searchBooks.addAll(newDatas);
-
+    public void addAll(List<SearchBookBean> newDataList, String content) {
+        if (newDataList != null && newDataList.size() > 0) {
+            searchBooks.addAll(newDataList);
             removeDuplicationByHashSet(searchBooks);
-
-            searchBooks = SearchSortUtils.filerSearchTools(searchBooks,content);
-
+            searchBooks = SearchSortUtils.filerSearchTools(searchBooks, content);
             notifyDataSetChanged();
         }
     }
 
 
-
-    /**使用HashSet实现List去重(无序)
+    /**
+     * 使用HashSet实现List去重(无序)
      *
      * @param list
-     * */
-    public  List<SearchBookBean> removeDuplicationByHashSet(List<SearchBookBean> list) {
+     */
+    public List<SearchBookBean> removeDuplicationByHashSet(List<SearchBookBean> list) {
         HashSet<SearchBookBean> set = new HashSet<SearchBookBean>(list);
         //把List集合所有元素清空
         list.clear();

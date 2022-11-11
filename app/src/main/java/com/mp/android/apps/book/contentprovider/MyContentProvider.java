@@ -1,10 +1,10 @@
 package com.mp.android.apps.book.contentprovider;
 
-import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.net.Uri;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
@@ -15,7 +15,6 @@ public class MyContentProvider extends FileProvider {
     public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITIES);
     private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     private static final int URI_CODE = 0x123;
-
 
     @Override
     public boolean onCreate() {
@@ -37,8 +36,6 @@ public class MyContentProvider extends FileProvider {
     @Nullable
     @Override
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
-
-
         return null;
     }
 

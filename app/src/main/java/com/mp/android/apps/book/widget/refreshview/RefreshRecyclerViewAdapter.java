@@ -109,22 +109,16 @@ public abstract class RefreshRecyclerViewAdapter extends RecyclerView.Adapter {
 
     public abstract int getItemcount();
 
-    public void setIsAll(Boolean isAll, Boolean needNoti) {
+    public void setIsAll(Boolean isAll, Boolean needNotify) {
         this.isAll = isAll;
-        if (needNoti) {
+        if (needNotify) {
             if (Looper.myLooper() == Looper.getMainLooper()) {
-//                notifyItemRangeChanged(getItemCount(),getItemCount()-getItemcount());
                 if (getItemCount() > getItemcount()) {
                     notifyItemRangeChanged(getItemCount(), getItemCount() - getItemcount());
                 } else
                     notifyItemRemoved(getItemCount() + 1);
             } else {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        notifyDataSetChanged();
-                    }
-                });
+                handler.post(() -> notifyDataSetChanged());
             }
         }
     }

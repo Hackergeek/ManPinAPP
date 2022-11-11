@@ -1,22 +1,21 @@
 
 package com.mp.android.apps.book.model;
 
+import static com.mp.android.apps.book.presenter.impl.SearchPresenterImpl.TAG_KEY;
+
 import android.content.Context;
 import android.net.Uri;
 
 import com.mp.android.apps.book.bean.SearchBookBean;
-import com.mp.android.apps.book.model.impl.ContentAimanpinModeImpl;
-
-import com.mp.android.apps.book.model.impl.Content3040ModelImpl;
+import com.mp.android.apps.book.model.impl.ContentIdeaJainImpl;
 import com.mp.android.apps.book.model.impl.ContentLingDianModelImpl;
 import com.mp.android.apps.book.model.impl.ContentSoDuModelImpl;
 import com.mp.android.apps.book.model.impl.ContentTaduImpl;
 import com.mp.android.apps.book.model.impl.ContentXXBiQuGeModelImpl;
-import com.mp.android.apps.book.model.impl.ContentYb3ModelImpl;
 import com.mp.android.apps.book.model.impl.TXSBookModelImpl;
 import com.mp.android.apps.readActivity.bean.BookChapterBean;
 import com.mp.android.apps.readActivity.bean.ChapterInfoBean;
-import com.mp.android.apps.readActivity.bean.CollBookBean;
+import com.mp.android.apps.readActivity.bean.CollectionBookBean;
 import com.mp.android.apps.utils.Logger;
 import com.mp.android.apps.utils.SharedPreferenceUtil;
 
@@ -28,14 +27,7 @@ import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Single;
-import io.reactivex.SingleEmitter;
-import io.reactivex.SingleOnSubscribe;
-import io.reactivex.functions.Function;
-
-import static com.mp.android.apps.book.presenter.impl.SearchPresenterImpl.TAG_KEY;
 
 /**
  * 图书内容获取 加载，解析，章节处理，内容处理等问题
@@ -72,22 +64,20 @@ public class WebBookModelControl {
      * 增加引擎
      */
     private void initModels() {
-//        models.add(ContentAimanpinModeImpl.getInstance());
         //只具有搜索功能的下发服务器,为用户点击的上报数据
         models.add(ContentSoDuModelImpl.getInstance());
         models.add(ContentXXBiQuGeModelImpl.getInstance());
-        models.add(Content3040ModelImpl.getInstance());
+//        models.add(Content3040ModelImpl.getInstance());
         models.add(TXSBookModelImpl.getInstance());
-        models.add(ContentYb3ModelImpl.getInstance());
+//        models.add(ContentYb3ModelImpl.getInstance());
         models.add(ContentTaduImpl.getInstance());
         models.add(ContentLingDianModelImpl.getInstance());
-
-
+        models.add(ContentIdeaJainImpl.getInstance());
     }
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    public Observable<CollBookBean> getBookInfo(CollBookBean collBookBean) {
+    public Observable<CollectionBookBean> getBookInfo(CollectionBookBean collBookBean) {
         for (IReaderBookModel model : models) {
             if (model.getTAG().equals(collBookBean.getBookTag())) {
                 return model.getBookInfo(collBookBean);
@@ -101,7 +91,7 @@ public class WebBookModelControl {
      *
      * @return
      */
-    public Single<List<BookChapterBean>> getBookChapters(CollBookBean collBookBean) {
+    public Single<List<BookChapterBean>> getBookChapters(CollectionBookBean collBookBean) {
 
         Uri uri = Uri.parse(collBookBean.getBookChapterUrl());
         String TAG = uri.getScheme() + "://" + uri.getHost();
@@ -109,24 +99,20 @@ public class WebBookModelControl {
 
         for (IReaderBookModel model : models) {
             if (model.getTAG().equals(TAG)) {
-               return model.getBookChapters(collBookBean).map(new Function<List<BookChapterBean>, List<BookChapterBean>>() {
-                    @Override
-                    public List<BookChapterBean> apply(List<BookChapterBean> bookChapterBeans) throws Exception {
-                        return removeDuplication(bookChapterBeans);
-                    }
-                });
+                return model.getBookChapters(collBookBean).map(bookChapterBeans -> removeDuplication(bookChapterBeans));
             }
         }
         return null;
     }
-    private List<BookChapterBean> removeDuplication( List<BookChapterBean> bookChapterSource){
-        CopyOnWriteArrayList<BookChapterBean> result=new CopyOnWriteArrayList<>();
+
+    private List<BookChapterBean> removeDuplication(List<BookChapterBean> bookChapterSource) {
+        CopyOnWriteArrayList<BookChapterBean> result = new CopyOnWriteArrayList<>();
         for (int i = 0; i < bookChapterSource.size(); i++) {
 
             Iterator<BookChapterBean> iterator = result.iterator();
-            while (iterator.hasNext()){
-                BookChapterBean bookTemp=iterator.next();
-                if (bookTemp.getId().equals(bookChapterSource.get(i).getId())){
+            while (iterator.hasNext()) {
+                BookChapterBean bookTemp = iterator.next();
+                if (bookTemp.getId().equals(bookChapterSource.get(i).getId())) {
                     result.remove(bookTemp);
                 }
             }
@@ -135,7 +121,6 @@ public class WebBookModelControl {
         for (int i = 0; i < result.size(); i++) {
             result.get(i).setPosition(i);
         }
-
         return result;
     }
 
@@ -166,21 +151,16 @@ public class WebBookModelControl {
      * 其他站点集合搜索
      */
     public Observable<List<SearchBookBean>> searchOtherBook(String content, int page, String tag) {
-
         for (IReaderBookModel model : models) {
             if (model.getTAG().equals(tag)) {
                 return model.searchBook(content, page);
             }
         }
 
-        return Observable.create(new ObservableOnSubscribe<List<SearchBookBean>>() {
-            @Override
-            public void subscribe(ObservableEmitter<List<SearchBookBean>> e) throws Exception {
-                e.onNext(new ArrayList<SearchBookBean>());
-                e.onComplete();
-            }
+        return Observable.create(e -> {
+            e.onNext(new ArrayList<SearchBookBean>());
+            e.onComplete();
         });
-
     }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -191,7 +171,7 @@ public class WebBookModelControl {
      *
      * @param searchEngine
      */
-    public void registerSearchEngine(List<Map<String,String>> searchEngine, Context context) {
+    public void registerSearchEngine(List<Map<String, String>> searchEngine, Context context) {
 
         //搜索引擎初始化
         for (IReaderBookModel model : models) {
@@ -201,8 +181,8 @@ public class WebBookModelControl {
         }
     }
 
-    private void newSearchEngine(List<Map<String,String>> searchEngine, String ImplTAG) {
-        Map<String,String> map = new HashMap<String,String>();
+    private void newSearchEngine(List<Map<String, String>> searchEngine, String ImplTAG) {
+        Map<String, String> map = new HashMap<String, String>();
         map.put(TAG_KEY, ImplTAG);
         searchEngine.add(map);
     }

@@ -2,8 +2,10 @@ package com.mp.android.apps.book.widget.refreshview;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -73,10 +75,10 @@ public class RefreshRecyclerView extends FrameLayout {
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 if (((RefreshRecyclerViewAdapter) recyclerView.getAdapter()).canLoadMore() && ((RefreshRecyclerViewAdapter) recyclerView.getAdapter()).getItemCount() - 1 == ((LinearLayoutManager) recyclerView.getLayoutManager()).findLastVisibleItemPosition()) {
-                    if(!((RefreshRecyclerViewAdapter) recyclerView.getAdapter()).getLoadMoreError()){
+                    if (!((RefreshRecyclerViewAdapter) recyclerView.getAdapter()).getLoadMoreError()) {
                         if (null != loadMoreListener) {
                             ((RefreshRecyclerViewAdapter) recyclerView.getAdapter()).setIsRequesting(2, false);
-                            loadMoreListener.startLoadmore();
+                            loadMoreListener.startLoadMore();
                         }
                     }
                 }
@@ -124,19 +126,19 @@ public class RefreshRecyclerView extends FrameLayout {
         }
     }
 
-    public void finishRefresh(Boolean needNoti) {
-        finishRefresh(((RefreshRecyclerViewAdapter) recyclerView.getAdapter()).getItemcount() == 0, needNoti);
+    public void finishRefresh(Boolean needNotify) {
+        finishRefresh(((RefreshRecyclerViewAdapter) recyclerView.getAdapter()).getItemcount() == 0, needNotify);
     }
 
-    public void finishRefresh(Boolean isAll, Boolean needNoti) {
+    public void finishRefresh(Boolean isAll, Boolean needNotify) {
         rpb.setDurProgress(0);
         if (isAll) {
             ((RefreshRecyclerViewAdapter) recyclerView.getAdapter()).setIsRequesting(0, false);
             rpb.setIsAutoLoading(false);
-            ((RefreshRecyclerViewAdapter) recyclerView.getAdapter()).setIsAll(isAll, needNoti);
+            ((RefreshRecyclerViewAdapter) recyclerView.getAdapter()).setIsAll(isAll, needNotify);
         } else {
             rpb.setIsAutoLoading(false);
-            ((RefreshRecyclerViewAdapter) recyclerView.getAdapter()).setIsRequesting(0, needNoti);
+            ((RefreshRecyclerViewAdapter) recyclerView.getAdapter()).setIsRequesting(0, needNotify);
         }
 
         if (isAll) {
@@ -169,12 +171,9 @@ public class RefreshRecyclerView extends FrameLayout {
     }
 
     public void setRefreshRecyclerViewAdapter(RefreshRecyclerViewAdapter refreshRecyclerViewAdapter, RecyclerView.LayoutManager layoutManager) {
-        refreshRecyclerViewAdapter.setClickTryAgainListener(new RefreshRecyclerViewAdapter.OnClickTryAgainListener() {
-            @Override
-            public void loadMoreErrorTryAgain() {
-                if (loadMoreListener != null)
-                    loadMoreListener.loadMoreErrorTryAgain();
-            }
+        refreshRecyclerViewAdapter.setClickTryAgainListener(() -> {
+            if (loadMoreListener != null)
+                loadMoreListener.loadMoreErrorTryAgain();
         });
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(refreshRecyclerViewAdapter);

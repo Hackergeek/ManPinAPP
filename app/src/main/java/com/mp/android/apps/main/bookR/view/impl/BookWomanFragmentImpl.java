@@ -6,7 +6,7 @@ import android.view.View;
 import com.mp.android.apps.R;
 import com.mp.android.apps.book.view.impl.BookRankListActivity;
 
-public class BookRWomanFImpl extends BookRManFImpl {
+public class BookWomanFragmentImpl extends BookManFragment {
 
     @Override
     public void initLocalData() {

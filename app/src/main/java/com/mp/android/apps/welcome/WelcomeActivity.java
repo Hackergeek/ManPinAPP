@@ -25,7 +25,7 @@ import com.mp.android.apps.utils.SharedPreferenceUtil;
 
 public class WelcomeActivity extends MBaseActivity {
 
-    private String SP_PRIVACY = "sp_privacy";
+    private static final String SP_PRIVACY = "sp_privacy";
 
 
     @Override
@@ -110,24 +110,18 @@ public class WelcomeActivity extends MBaseActivity {
         params.width = (int) (defaultDisplay.getWidth() * 0.80);
         dialog.getWindow().setAttributes(params);
 
-        btn_exit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
+        btn_exit.setOnClickListener(v -> {
+            dialog.dismiss();
 
-                SharedPreferenceUtil.put(WelcomeActivity.this, SP_PRIVACY, false);
-                finish();
-            }
+            SharedPreferenceUtil.put(WelcomeActivity.this, SP_PRIVACY, false);
+            finish();
         });
 
-        btn_enter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
+        btn_enter.setOnClickListener(v -> {
+            dialog.dismiss();
 
-                SharedPreferenceUtil.put(WelcomeActivity.this, SP_PRIVACY, true);
-                startMainActivity();
-            }
+            SharedPreferenceUtil.put(WelcomeActivity.this, SP_PRIVACY, true);
+            startMainActivity();
         });
 
     }
@@ -137,6 +131,5 @@ public class WelcomeActivity extends MBaseActivity {
      */
     private void startMainActivity() {
         startActivityByAnim(new Intent(WelcomeActivity.this, MainActivity.class), 1, 0);
-
     }
 }

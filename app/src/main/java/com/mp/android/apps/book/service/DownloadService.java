@@ -10,7 +10,6 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
-import com.alibaba.fastjson.JSON;
 import com.mp.android.apps.IDownloadBookInterface;
 import com.mp.android.apps.book.bean.DownloadTaskBean;
 import com.mp.android.apps.book.contentprovider.MyContentProvider;
@@ -21,7 +20,7 @@ import com.mp.android.apps.book.utils.NetworkUtils;
 import com.mp.android.apps.readActivity.base.BaseService;
 import com.mp.android.apps.readActivity.bean.BookChapterBean;
 import com.mp.android.apps.readActivity.bean.ChapterInfoBean;
-import com.mp.android.apps.readActivity.bean.CollBookBean;
+import com.mp.android.apps.readActivity.bean.CollectionBookBean;
 import com.mp.android.apps.readActivity.local.BookRepository;
 import com.mp.android.apps.readActivity.local.DaoDbHelper;
 import com.mp.android.apps.readActivity.utils.BookManager;
@@ -30,28 +29,21 @@ import com.mp.android.apps.utils.Logger;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.ReentrantLock;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 
 
-import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
-import io.reactivex.internal.observers.ConsumerSingleObserver;
-import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
 
@@ -68,9 +60,9 @@ public class DownloadService extends BaseService {
         super.onCreate();
         Logger.d("======onCreate 同步本地数据,同步书架数据");
         try {
-            List<CollBookBean> collBookBeanList = BookRepository.getInstance().getCollBooks();
+            List<CollectionBookBean> collBookBeanList = BookRepository.getInstance().getCollBooks();
             if (collBookBeanList != null && collBookBeanList.size() > 0) {
-                for (CollBookBean collBookBean : collBookBeanList) {
+                for (CollectionBookBean collBookBean : collBookBeanList) {
                     Logger.d("====== 同步本地数据:"+collBookBean.getTitle());
                     WebBookModelControl.getInstance().getBookChapters(collBookBean).toObservable()
                             .flatMap(new Function<List<BookChapterBean>, Observable<?>>() {

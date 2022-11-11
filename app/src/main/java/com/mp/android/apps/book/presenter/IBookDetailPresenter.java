@@ -3,16 +3,16 @@ package com.mp.android.apps.book.presenter;
 
 import com.mp.android.apps.basemvplib.IPresenter;
 import com.mp.android.apps.book.bean.SearchBookBean;
-import com.mp.android.apps.readActivity.bean.CollBookBean;
+import com.mp.android.apps.readActivity.bean.CollectionBookBean;
 
 public interface IBookDetailPresenter extends IPresenter {
 
-    int getOpenfrom();
+    int getOpenFrom();
 
     SearchBookBean getSearchBook();
 
 
-    CollBookBean getCollBookBean();
+    CollectionBookBean getCollBookBean();
 
     /**
      * 是否是在本地书架中

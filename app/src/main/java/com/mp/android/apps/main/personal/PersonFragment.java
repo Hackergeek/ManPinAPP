@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.bumptech.glide.Glide;
 import com.hwangjr.rxbus.annotation.Subscribe;
 import com.hwangjr.rxbus.annotation.Tag;
@@ -15,16 +16,11 @@ import com.hwangjr.rxbus.thread.EventThread;
 import com.mp.android.apps.R;
 import com.mp.android.apps.SettingAboutActivity;
 import com.mp.android.apps.book.common.RxBusTag;
-import com.mp.android.apps.login.LoginActivity;
 import com.mp.android.apps.login.bean.login.Data;
 import com.mp.android.apps.login.fragment.imple.LoginBaseFragment;
 import com.mp.android.apps.login.utils.LoginManager;
-import com.mp.android.apps.main.MainActivity;
 import com.mp.android.apps.main.ManpinWXActivity;
-import com.mp.android.apps.main.home.model.IMainFragmentModelImpl;
 import com.mp.android.apps.basemvplib.IPresenter;
-import com.mp.android.apps.basemvplib.impl.BaseFragment;
-import com.mp.android.apps.book.base.observer.SimpleObserver;
 import com.mp.android.apps.book.view.impl.BookSourceActivity;
 import com.mp.android.apps.main.home.view.MyImageTextView;
 import com.umeng.socialize.ShareAction;
@@ -32,12 +28,7 @@ import com.umeng.socialize.bean.SHARE_MEDIA;
 import com.umeng.socialize.media.UMImage;
 import com.umeng.socialize.media.UMWeb;
 
-import java.util.List;
-import java.util.Random;
-
 import de.hdodenhof.circleimageview.CircleImageView;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 
 public class PersonFragment extends LoginBaseFragment implements View.OnClickListener {
 
@@ -55,7 +46,7 @@ public class PersonFragment extends LoginBaseFragment implements View.OnClickLis
 
     CircleImageView mUserLogo;
     MyImageTextView manpin_weixin_xiaobian_layout;
-    MyImageTextView booksource;
+    MyImageTextView bookSource;
     MyImageTextView guanyuwomen;
     MyImageTextView fenxiang;
 
@@ -73,16 +64,16 @@ public class PersonFragment extends LoginBaseFragment implements View.OnClickLis
         super.bindView();
 
 
-        musiclayout=view.findViewById(R.id.manpin_person_music_layout);
+        musiclayout = view.findViewById(R.id.manpin_person_music_layout);
         musiclayout.setOnClickListener(this);
 
-        travelLayout=view.findViewById(R.id.manpin_person_travel);
+        travelLayout = view.findViewById(R.id.manpin_person_travel);
         travelLayout.setOnClickListener(this);
 
-        wallpaperLayout=view.findViewById(R.id.manpin_person_wallpaper);
+        wallpaperLayout = view.findViewById(R.id.manpin_person_wallpaper);
         wallpaperLayout.setOnClickListener(this);
 
-        gamesLayout=view.findViewById(R.id.manpin_person_games);
+        gamesLayout = view.findViewById(R.id.manpin_person_games);
         gamesLayout.setOnClickListener(this);
 
         guanyuwomen = view.findViewById(R.id.guanyuwomen);
@@ -95,8 +86,8 @@ public class PersonFragment extends LoginBaseFragment implements View.OnClickLis
         fenxiang.setOnClickListener(this);
 
 
-        booksource = view.findViewById(R.id.person_booksource_layout);
-        booksource.setOnClickListener(this);
+        bookSource = view.findViewById(R.id.person_booksource_layout);
+        bookSource.setOnClickListener(this);
 
         personExternalLoginLayout = view.findViewById(R.id.person_external_login_layout);
         personExternalLoginLayout.setVisibility(View.VISIBLE);
@@ -131,11 +122,11 @@ public class PersonFragment extends LoginBaseFragment implements View.OnClickLis
                 startActivity(intent2);
                 break;
             case R.id.person_fenxiang_layout:
-                UMWeb weburl = new UMWeb("http://aimanpin.com");
-                weburl.setDescription("官方网址:\n \n http://aimanpin.com ");
-                weburl.setTitle("漫品官网");
-                weburl.setThumb(new UMImage(requireContext(), R.drawable.ic_launcher_share_background));
-                new ShareAction(requireActivity()).withMedia(weburl)
+                UMWeb umweb = new UMWeb("http://aimanpin.com");
+                umweb.setDescription("官方网址:\n \n http://aimanpin.com ");
+                umweb.setTitle("漫品官网");
+                umweb.setThumb(new UMImage(requireContext(), R.drawable.ic_launcher_share_background));
+                new ShareAction(requireActivity()).withMedia(umweb)
                         .setDisplayList(SHARE_MEDIA.WEIXIN, SHARE_MEDIA.WEIXIN_CIRCLE
                                 , SHARE_MEDIA.WEIXIN_FAVORITE, SHARE_MEDIA.QQ, SHARE_MEDIA.QZONE
                                 , SHARE_MEDIA.SINA
@@ -159,13 +150,15 @@ public class PersonFragment extends LoginBaseFragment implements View.OnClickLis
                 break;
         }
     }
-    private void jumpLinkUrl(String linkUrl){
-        Intent intentUrl= new Intent();
+
+    private void jumpLinkUrl(String linkUrl) {
+        Intent intentUrl = new Intent();
         intentUrl.setAction("android.intent.action.VIEW");
         Uri content_url = Uri.parse(linkUrl);
         intentUrl.setData(content_url);
         startActivity(intentUrl);
     }
+
     /**
      * 基于RXBus获取登陆成功通知消息
      */
@@ -186,7 +179,7 @@ public class PersonFragment extends LoginBaseFragment implements View.OnClickLis
                 mUserLogo.setVisibility(View.VISIBLE);
                 Glide.with(requireContext()).load(loginInfo.getUsericon()).into(mUserLogo);
             }
-        }else {
+        } else {
             personExternalLoginLayout.setVisibility(View.VISIBLE);
             personFragmentUsername.setVisibility(View.GONE);
             mUserLogo.setVisibility(View.GONE);

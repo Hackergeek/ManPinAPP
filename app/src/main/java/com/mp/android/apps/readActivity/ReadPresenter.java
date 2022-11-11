@@ -5,7 +5,7 @@ import com.google.android.apps.photolab.storyboard.download.MD5Utils;
 import com.mp.android.apps.book.model.WebBookModelControl;
 import com.mp.android.apps.readActivity.bean.BookChapterBean;
 import com.mp.android.apps.readActivity.bean.ChapterInfoBean;
-import com.mp.android.apps.readActivity.bean.CollBookBean;
+import com.mp.android.apps.readActivity.bean.CollectionBookBean;
 import com.mp.android.apps.readActivity.local.BookRepository;
 import com.mp.android.apps.readActivity.utils.RxUtils;
 import com.mp.android.apps.readActivity.view.TxtChapter;
@@ -20,10 +20,7 @@ import java.util.List;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
-
-
 
 public class ReadPresenter extends RxPresenter<ReadContract.View>
         implements ReadContract.Presenter {
@@ -32,17 +29,14 @@ public class ReadPresenter extends RxPresenter<ReadContract.View>
     private Subscription mChapterSub;
 
     @Override
-    public void loadCategory(CollBookBean collBookBean) {
+    public void loadCategory(CollectionBookBean collBookBean) {
         Disposable disposable = WebBookModelControl.getInstance()
                 .getBookChapters(collBookBean)
-                .doOnSuccess(new Consumer<List<BookChapterBean>>() {
-                    @Override
-                    public void accept(List<BookChapterBean> bookChapterBeen) throws Exception {
-                        //进行设定BookChapter所属的书的id。
-                        for (BookChapterBean bookChapter : bookChapterBeen) {
-                            bookChapter.setId(MD5Utils.strToMd5By16(bookChapter.getLink()));
-                            bookChapter.setBookId(collBookBean.get_id());
-                        }
+                .doOnSuccess(bookChapterBeen -> {
+                    //进行设定BookChapter所属的书的id。
+                    for (BookChapterBean bookChapter : bookChapterBeen) {
+                        bookChapter.setId(MD5Utils.strToMd5By16(bookChapter.getLink()));
+                        bookChapter.setBookId(collBookBean.get_id());
                     }
                 })
                 .compose(RxUtils::toSimpleSingle)

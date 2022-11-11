@@ -39,7 +39,7 @@ public class BookChapterBeanDao extends AbstractDao<BookChapterBean, String> {
     }
 
     private Query<BookChapterBean> downloadTaskBean_BookChapterListQuery;
-    private Query<BookChapterBean> collBookBean_BookChapterListQuery;
+    private Query<BookChapterBean> collectionBookBean_BookChapterListQuery;
 
     public BookChapterBeanDao(DaoConfig config) {
         super(config);
@@ -213,16 +213,16 @@ public class BookChapterBeanDao extends AbstractDao<BookChapterBean, String> {
         return query.list();
     }
 
-    /** Internal query to resolve the "bookChapterList" to-many relationship of CollBookBean. */
-    public List<BookChapterBean> _queryCollBookBean_BookChapterList(String bookId) {
+    /** Internal query to resolve the "bookChapterList" to-many relationship of CollectionBookBean. */
+    public List<BookChapterBean> _queryCollectionBookBean_BookChapterList(String bookId) {
         synchronized (this) {
-            if (collBookBean_BookChapterListQuery == null) {
+            if (collectionBookBean_BookChapterListQuery == null) {
                 QueryBuilder<BookChapterBean> queryBuilder = queryBuilder();
                 queryBuilder.where(Properties.BookId.eq(null));
-                collBookBean_BookChapterListQuery = queryBuilder.build();
+                collectionBookBean_BookChapterListQuery = queryBuilder.build();
             }
         }
-        Query<BookChapterBean> query = collBookBean_BookChapterListQuery.forCurrentThread();
+        Query<BookChapterBean> query = collectionBookBean_BookChapterListQuery.forCurrentThread();
         query.setParameter(0, bookId);
         return query.list();
     }

@@ -27,7 +27,7 @@ import com.mp.android.apps.book.view.impl.BookDetailActivity;
 
 import java.util.List;
 
-public class BookRManFImpl extends BaseFragment<IBookRManFPresenter> implements IBookRManFView, OnHomeAdapterClickListener, HeaderViewHolder.IRankTitle {
+public class BookManFragment extends BaseFragment<IBookRManFPresenter> implements IBookRManFView, OnHomeAdapterClickListener, HeaderViewHolder.IRankTitle {
     private RecyclerView recommendRecyclerView;
     private BookManFAdapter recommendRecyclerAdapter;
 

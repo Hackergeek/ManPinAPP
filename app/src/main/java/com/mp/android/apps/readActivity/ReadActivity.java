@@ -44,7 +44,7 @@ import com.mp.android.apps.book.contentprovider.MyContentProvider;
 import com.mp.android.apps.book.dao.DownloadTaskBeanDao;
 import com.mp.android.apps.readActivity.base.BaseMVPActivity;
 import com.mp.android.apps.readActivity.bean.BookChapterBean;
-import com.mp.android.apps.readActivity.bean.CollBookBean;
+import com.mp.android.apps.readActivity.bean.CollectionBookBean;
 import com.mp.android.apps.readActivity.local.BookRepository;
 import com.mp.android.apps.readActivity.local.DaoDbHelper;
 import com.mp.android.apps.readActivity.local.ReadSettingManager;
@@ -56,7 +56,6 @@ import com.mp.android.apps.readActivity.utils.ScreenUtils;
 import com.mp.android.apps.readActivity.utils.StringUtils;
 import com.mp.android.apps.readActivity.utils.SystemBarUtils;
 import com.mp.android.apps.readActivity.view.PageLoader;
-import com.mp.android.apps.readActivity.view.PageStyle;
 import com.mp.android.apps.readActivity.view.PageView;
 import com.mp.android.apps.readActivity.view.TxtChapter;
 import com.mp.android.apps.readActivity.view.category.CategoryAdapter;
@@ -67,7 +66,6 @@ import java.text.NumberFormat;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import io.reactivex.disposables.Disposable;
 
 import static android.view.View.GONE;
@@ -137,7 +135,7 @@ public class ReadActivity extends BaseMVPActivity<ReadContract.Presenter>
     private Animation mBottomInAnim;
     private Animation mBottomOutAnim;
     private CategoryAdapter mCategoryAdapter;
-    private CollBookBean mCollBook;
+    private CollectionBookBean mCollBook;
     //控制屏幕常亮
     private PowerManager.WakeLock mWakeLock;
     private Handler mHandler = new Handler() {
@@ -155,6 +153,7 @@ public class ReadActivity extends BaseMVPActivity<ReadContract.Presenter>
             }
         }
     };
+
     // 接收电池信息和时间更新的广播
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
@@ -189,7 +188,7 @@ public class ReadActivity extends BaseMVPActivity<ReadContract.Presenter>
                 DownloadTaskBean downloadTaskBean = DaoDbHelper.getInstance().getSession().getDownloadTaskBeanDao().queryBuilder()
                         .where(DownloadTaskBeanDao.Properties.BookId.eq(mBookId)).build().unique();
                 if (downloadTaskBean != null) {
-                    if (downloadTaskBean.getStatus()==DownloadTaskBean.STATUS_LOADING){
+                    if (downloadTaskBean.getStatus() == DownloadTaskBean.STATUS_LOADING) {
                         int temp = (int) ((float) downloadTaskBean.getCurrentChapter() / (float) downloadTaskBean.getLastChapter() * 100);
                         if (temp < 99) {
                             // 创建一个数值格式化对象
@@ -200,9 +199,9 @@ public class ReadActivity extends BaseMVPActivity<ReadContract.Presenter>
                             Logger.d(TAG, result);
                             readBookCacheDownload.setText(result);
                         }
-                    }else if (downloadTaskBean.getStatus()==DownloadTaskBean.STATUS_PAUSE){
+                    } else if (downloadTaskBean.getStatus() == DownloadTaskBean.STATUS_PAUSE) {
                         readBookCacheDownload.setText("已暂停");
-                    }else if (downloadTaskBean.getStatus()==DownloadTaskBean.STATUS_FINISH){
+                    } else if (downloadTaskBean.getStatus() == DownloadTaskBean.STATUS_FINISH) {
                         readBookCacheDownload.setText("已下载");
                     }
                 }
@@ -766,7 +765,7 @@ public class ReadActivity extends BaseMVPActivity<ReadContract.Presenter>
         }
 
         if (!mCollBook.isLocal() && !isCollected
-                &&mCollBook.getBookChapters()!=null &&!mCollBook.getBookChapters().isEmpty()) {
+                && mCollBook.getBookChapters() != null && !mCollBook.getBookChapters().isEmpty()) {
             AlertDialog alertDialog = new AlertDialog.Builder(this)
                     .setTitle("加入书架")
                     .setMessage("喜欢本书就加入书架吧")
@@ -884,23 +883,16 @@ public class ReadActivity extends BaseMVPActivity<ReadContract.Presenter>
             params.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
             getWindow().setAttributes(params);
 
-            mPvPage.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
-                @Override
-                public WindowInsets onApplyWindowInsets(View v, WindowInsets windowInsets) {
-                    DisplayCutout displayCutout = windowInsets.getDisplayCutout();
-                    if (displayCutout != null) {
-                        int top = displayCutout.getSafeInsetTop();
-                        mPageLoader.mSafeInsetTop = top;
-                        mPvPage.invalidate();
-                    }
-
-                    return windowInsets.consumeSystemWindowInsets();
+            mPvPage.setOnApplyWindowInsetsListener((v, windowInsets) -> {
+                DisplayCutout displayCutout = windowInsets.getDisplayCutout();
+                if (displayCutout != null) {
+                    int top = displayCutout.getSafeInsetTop();
+                    mPageLoader.mSafeInsetTop = top;
+                    mPvPage.invalidate();
                 }
+
+                return windowInsets.consumeSystemWindowInsets();
             });
-
-
         }
-
-
     }
 }

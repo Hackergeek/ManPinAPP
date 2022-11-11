@@ -11,7 +11,6 @@ import android.widget.PopupWindow;
 import android.widget.Toast;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.google.gson.JsonObject;
 import com.hwangjr.rxbus.RxBus;
 import com.mp.android.apps.MyApplication;
 import com.mp.android.apps.R;
@@ -28,15 +27,13 @@ import com.mp.android.apps.main.bookR.view.popupwindow.bean.UserBookCorresponden
 import com.mp.android.apps.main.bookR.view.popupwindow.utils.BCSettingModel;
 import com.mp.android.apps.main.home.bean.SourceListContent;
 import com.mp.android.apps.readActivity.bean.BookRecordBean;
-import com.mp.android.apps.readActivity.bean.CollBookBean;
+import com.mp.android.apps.readActivity.bean.CollectionBookBean;
 import com.mp.android.apps.readActivity.local.BookRepository;
 import com.mp.android.apps.readActivity.local.DaoDbHelper;
 import com.mp.android.apps.readActivity.utils.ToastUtils;
 import com.mp.android.apps.utils.GeneralTools;
 import com.tencent.bugly.beta.Beta;
 
-import java.net.URI;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -210,10 +207,10 @@ interface CompareVersionCallBack{
      */
     private void handleRecoveryBooks(){
 
-        List<CollBookBean> collBookBeanList = DaoDbHelper.getInstance().getSession().getCollBookBeanDao().queryBuilder().list();
+        List<CollectionBookBean> collBookBeanList = DaoDbHelper.getInstance().getSession().getCollectionBookBeanDao().queryBuilder().list();
         List<String> localCollBooks=new ArrayList<>();
 
-        for (CollBookBean collBookBean:collBookBeanList) {
+        for (CollectionBookBean collBookBean:collBookBeanList) {
             localCollBooks.add(collBookBean.get_id());
         }
 
@@ -232,7 +229,7 @@ interface CompareVersionCallBack{
                                 for (SourceListContent sourceListContent : userBookCorrespondence.getBookList()) {
                                     if (!TextUtils.isEmpty(sourceListContent.getNoteUrl()) && !localCollBooks.contains(sourceListContent.getNoteUrl())) {
                                         //添加进书架
-                                        CollBookBean collBookBean = new CollBookBean();
+                                        CollectionBookBean collBookBean = new CollectionBookBean();
                                         collBookBean.set_id(sourceListContent.getNoteUrl());
                                         collBookBean.setTitle(sourceListContent.getName());
                                         Uri uri=Uri.parse(sourceListContent.getNoteUrl());
@@ -240,9 +237,9 @@ interface CompareVersionCallBack{
                                         collBookBean.setBookTag(bookTag);
                                         WebBookModelControl.getInstance().getBookInfo(collBookBean)
                                                 .observeOn(AndroidSchedulers.mainThread())
-                                                .subscribeOn(Schedulers.io()).subscribe(new SimpleObserver<CollBookBean>() {
+                                                .subscribeOn(Schedulers.io()).subscribe(new SimpleObserver<CollectionBookBean>() {
                                             @Override
-                                            public void onNext(CollBookBean collBookBean) {
+                                            public void onNext(CollectionBookBean collBookBean) {
                                                 BookShelUtils.getInstance().addToBookShelfUtils(collBookBean);
                                                 HashMap<String, Integer> booksRecord=userBookCorrespondence.getUserBookRelay();
                                                 if (booksRecord!=null && booksRecord.size()>0){
@@ -288,10 +285,10 @@ interface CompareVersionCallBack{
      * 处理备份逻辑
      */
     private void handleBackBooks(){
-        List<CollBookBean> temp = DaoDbHelper.getInstance().getSession().getCollBookBeanDao().queryBuilder().list();
+        List<CollectionBookBean> temp = DaoDbHelper.getInstance().getSession().getCollectionBookBeanDao().queryBuilder().list();
         if (temp!=null && temp.size()>0){
             List<SourceListContent> sourceListContents=new ArrayList<>();
-            for (CollBookBean collBookBean:temp) {
+            for (CollectionBookBean collBookBean:temp) {
                 sourceListContents.add(ObtainBookInfoUtils.getInstance().translateBookInfo(collBookBean));
             }
             List<BookRecordBean> tempRecords = DaoDbHelper.getInstance().getSession().getBookRecordBeanDao().queryBuilder().list();

@@ -19,7 +19,7 @@ import com.mp.android.apps.IDownloadBookInterface;
 import com.mp.android.apps.R;
 import com.mp.android.apps.book.bean.DownloadTaskBean;
 import com.mp.android.apps.book.service.DownloadService;
-import com.mp.android.apps.readActivity.bean.CollBookBean;
+import com.mp.android.apps.readActivity.bean.CollectionBookBean;
 import com.mp.android.apps.readActivity.local.BookRepository;
 
 
@@ -54,9 +54,7 @@ public class DownloadCacheDialog extends Dialog {
         tv_download = findViewById(R.id.tv_download);
         manpinDownloadTips = findViewById(R.id.manpin_download_tips);
         Intent serviceIntent = new Intent(context, DownloadService.class);
-//        serviceIntent.setAction("com.mp.android.apps.monkeybook.service.DownloadService_action");
-//        serviceIntent.setPackage(context.getPackageName());
-        CollBookBean collBookBean = BookRepository.getInstance().getCollBook(getBookId());
+        CollectionBookBean collBookBean = BookRepository.getInstance().getCollBook(getBookId());
         if (collBookBean!=null){
             manpinDownloadTips.setText(String.format("《%s》", collBookBean.getTitle()));
         }
@@ -122,7 +120,7 @@ public class DownloadCacheDialog extends Dialog {
      * @param collBookBean 本地收藏图书
      * @return 返回 DownloadTaskBean
      */
-    private DownloadTaskBean translateCollBooBean(CollBookBean collBookBean) {
+    private DownloadTaskBean translateCollBooBean(CollectionBookBean collBookBean) {
         DownloadTaskBean downloadTaskBean = new DownloadTaskBean();
         downloadTaskBean.setBookId(collBookBean.get_id());
         downloadTaskBean.setTaskName(collBookBean.getTitle());

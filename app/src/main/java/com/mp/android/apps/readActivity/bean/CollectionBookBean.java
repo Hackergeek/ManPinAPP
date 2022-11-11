@@ -4,6 +4,13 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
 
+import com.mp.android.apps.MyApplication;
+import com.mp.android.apps.book.bean.SearchBookBean;
+import com.mp.android.apps.book.dao.BookChapterBeanDao;
+import com.mp.android.apps.book.dao.CollectionBookBeanDao;
+import com.mp.android.apps.book.dao.DaoSession;
+import com.mp.android.apps.readActivity.utils.Constant;
+import com.mp.android.apps.readActivity.utils.StringUtils;
 
 import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.annotation.Entity;
@@ -13,20 +20,12 @@ import org.greenrobot.greendao.annotation.ToMany;
 
 import java.util.List;
 
-import com.mp.android.apps.MyApplication;
-import com.mp.android.apps.book.bean.SearchBookBean;
-import com.mp.android.apps.book.dao.DaoSession;
-import com.mp.android.apps.readActivity.utils.Constant;
-import com.mp.android.apps.readActivity.utils.StringUtils;
-import com.mp.android.apps.book.dao.BookChapterBeanDao;
-import com.mp.android.apps.book.dao.CollBookBeanDao;
-
 
 /**
  * 收藏的书籍
  */
 @Entity
-public class CollBookBean implements Parcelable {
+public class CollectionBookBean implements Parcelable {
 
     public static final int STATUS_UNCACHE = 0; //未缓存
     public static final int STATUS_CACHING = 1; //正在缓存
@@ -84,16 +83,14 @@ public class CollBookBean implements Parcelable {
      */
     @Generated(hash = 2040040024)
     private transient DaoSession daoSession;
-    /**
-     * Used for active entity operations.
-     */
-    @Generated(hash = 1552163441)
-    private transient CollBookBeanDao myDao;
+    /** Used for active entity operations. */
+    @Generated(hash = 729793913)
+    private transient CollectionBookBeanDao myDao;
 
-    @Generated(hash = 144011258)
-    public CollBookBean(String _id, String title, String author, String shortIntro, String cover, boolean hasCp,
-                        int latelyFollower, double retentionRatio, String updated, String lastRead, int chaptersCount,
-                        String lastChapter, boolean isUpdate, boolean isLocal, String bookTag, String bookChapterUrl) {
+    @Generated(hash = 1052023064)
+    public CollectionBookBean(String _id, String title, String author, String shortIntro, String cover, boolean hasCp,
+            int latelyFollower, double retentionRatio, String updated, String lastRead, int chaptersCount, String lastChapter,
+            boolean isUpdate, boolean isLocal, String bookTag, String bookChapterUrl) {
         this._id = _id;
         this.title = title;
         this.author = author;
@@ -112,15 +109,17 @@ public class CollBookBean implements Parcelable {
         this.bookChapterUrl = bookChapterUrl;
     }
 
-    public CollBookBean() {
+    public CollectionBookBean() {
     }
 
     public String get_id() {
         return _id;
     }
 
-    /** searchBookBean.getNoteUrl()
+    /**
+     * searchBookBean.getNoteUrl()
      * 默认设置为
+     *
      * @param _id
      */
     public void set_id(String _id) {
@@ -270,7 +269,7 @@ public class CollBookBean implements Parcelable {
      * To-many relationship, resolved on first access (and after reset).
      * Changes to to-many relations are not persisted, make changes to the target entity.
      */
-    @Generated(hash = 711740787)
+    @Generated(hash = 1624660715)
     public List<BookChapterBean> getBookChapterList() {
         if (bookChapterList == null) {
             final DaoSession daoSession = this.daoSession;
@@ -278,8 +277,7 @@ public class CollBookBean implements Parcelable {
                 throw new DaoException("Entity is detached from DAO context");
             }
             BookChapterBeanDao targetDao = daoSession.getBookChapterBeanDao();
-            List<BookChapterBean> bookChapterListNew = targetDao
-                    ._queryCollBookBean_BookChapterList(_id);
+            List<BookChapterBean> bookChapterListNew = targetDao._queryCollectionBookBean_BookChapterList(_id);
             synchronized (this) {
                 if (bookChapterList == null) {
                     bookChapterList = bookChapterListNew;
@@ -288,7 +286,6 @@ public class CollBookBean implements Parcelable {
         }
         return bookChapterList;
     }
-
 
     /**
      * Resets a to-many relationship, making the next get call to query for a fresh result.
@@ -370,7 +367,7 @@ public class CollBookBean implements Parcelable {
         dest.writeString(this.bookChapterUrl);
     }
 
-    protected CollBookBean(Parcel in) {
+    protected CollectionBookBean(Parcel in) {
         this._id = in.readString();
         this.title = in.readString();
         this.author = in.readString();
@@ -388,15 +385,15 @@ public class CollBookBean implements Parcelable {
         this.bookChapterUrl = in.readString();
     }
 
-    public static final Creator<CollBookBean> CREATOR = new Creator<CollBookBean>() {
+    public static final Creator<CollectionBookBean> CREATOR = new Creator<CollectionBookBean>() {
         @Override
-        public CollBookBean createFromParcel(Parcel source) {
-            return new CollBookBean(source);
+        public CollectionBookBean createFromParcel(Parcel source) {
+            return new CollectionBookBean(source);
         }
 
         @Override
-        public CollBookBean[] newArray(int size) {
-            return new CollBookBean[size];
+        public CollectionBookBean[] newArray(int size) {
+            return new CollectionBookBean[size];
         }
     };
 
@@ -406,8 +403,8 @@ public class CollBookBean implements Parcelable {
      * @param searchBookBean
      * @return
      */
-    public CollBookBean getCollBookBeanFromSearch(SearchBookBean searchBookBean) {
-        CollBookBean collBookBean = new CollBookBean();
+    public CollectionBookBean getCollBookBeanFromSearch(SearchBookBean searchBookBean) {
+        CollectionBookBean collBookBean = new CollectionBookBean();
         collBookBean.set_id(searchBookBean.getNoteUrl());
         collBookBean.setAuthor(searchBookBean.getAuthor());
         collBookBean.setCover(searchBookBean.getCoverUrl());
@@ -438,9 +435,9 @@ public class CollBookBean implements Parcelable {
     }
 
     /** called by internal mechanisms, do not call yourself. */
-    @Generated(hash = 159260324)
+    @Generated(hash = 1699652971)
     public void __setDaoSession(DaoSession daoSession) {
         this.daoSession = daoSession;
-        myDao = daoSession != null ? daoSession.getCollBookBeanDao() : null;
+        myDao = daoSession != null ? daoSession.getCollectionBookBeanDao() : null;
     }
 }

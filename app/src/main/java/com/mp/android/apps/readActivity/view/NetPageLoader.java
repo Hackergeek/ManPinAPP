@@ -2,7 +2,7 @@ package com.mp.android.apps.readActivity.view;
 
 
 import com.mp.android.apps.readActivity.bean.BookChapterBean;
-import com.mp.android.apps.readActivity.bean.CollBookBean;
+import com.mp.android.apps.readActivity.bean.CollectionBookBean;
 import com.mp.android.apps.readActivity.local.BookRepository;
 import com.mp.android.apps.readActivity.utils.BookManager;
 import com.mp.android.apps.readActivity.utils.Constant;
@@ -23,7 +23,7 @@ import java.util.List;
 public class NetPageLoader extends PageLoader {
     private static final String TAG = "PageFactory";
 
-    public NetPageLoader(PageView pageView, CollBookBean collBook) {
+    public NetPageLoader(PageView pageView, CollectionBookBean collBook) {
         super(pageView, collBook);
     }
 

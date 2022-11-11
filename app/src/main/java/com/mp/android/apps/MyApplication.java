@@ -54,11 +54,6 @@ public class MyApplication extends Application {
         PlatformConfig.setSinaWeibo("1928616164", "36e5f497bc6b20cb73ff7138e0e1cbe5", "http://sns.whalecloud.com");
 
         instance = this;
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            startForegroundService(new Intent(this, DownloadService.class));
-//        } else {
-//            startService(new Intent(this, DownloadService.class));
-//        }
         startDownloadService();
 
         GeneralTools.getVersion(this);
@@ -66,16 +61,12 @@ public class MyApplication extends Application {
 
     private void startDownloadService() {
         Intent serviceIntent = new Intent(this, DownloadService.class);
-//        serviceIntent.setAction("com.mp.android.apps.monkeybook.service.DownloadService_action");
-//        serviceIntent.setPackage(getPackageName());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             try {
                 startService(serviceIntent);
             } catch (Exception e) {
                 Logger.d("startDownloadService", Arrays.toString(e.getStackTrace()));
                 Intent activityIntent = new Intent(this, TranslucentActivity.class);
-//                serviceIntent.setAction("com.mp.android.apps.TranslucentActivity");
-//                serviceIntent.setPackage(getPackageName());
                 activityIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(activityIntent);
             }

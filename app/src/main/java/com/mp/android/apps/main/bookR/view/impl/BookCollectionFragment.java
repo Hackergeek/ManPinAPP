@@ -15,7 +15,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.hwangjr.rxbus.RxBus;
 import com.hwangjr.rxbus.annotation.Subscribe;
 import com.hwangjr.rxbus.annotation.Tag;
 import com.hwangjr.rxbus.thread.EventThread;
@@ -29,7 +28,6 @@ import com.mp.android.apps.book.presenter.impl.MainPresenterImpl;
 import com.mp.android.apps.book.view.IMainView;
 import com.mp.android.apps.book.view.adapter.BookShelfAdapter;
 import com.mp.android.apps.book.view.impl.BookDetailActivity;
-import com.mp.android.apps.book.view.impl.BookSourceActivity;
 import com.mp.android.apps.book.view.impl.BookSourceGuideActivity;
 import com.mp.android.apps.book.view.impl.DownloadBookActivity;
 import com.mp.android.apps.book.view.impl.ImportBookActivity;
@@ -38,7 +36,7 @@ import com.mp.android.apps.book.widget.refreshview.RefreshRecyclerView;
 import com.mp.android.apps.main.MainActivity;
 import com.mp.android.apps.main.bookR.view.popupwindow.BCSettingPopupwindow;
 import com.mp.android.apps.readActivity.ReadActivity;
-import com.mp.android.apps.readActivity.bean.CollBookBean;
+import com.mp.android.apps.readActivity.bean.CollectionBookBean;
 import com.victor.loading.rotate.RotateLoading;
 
 import java.util.List;
@@ -144,7 +142,7 @@ public class BookCollectionFragment extends BaseFragment<IMainPresenter> impleme
             }
 
             @Override
-            public void onClick(CollBookBean collBookBean, int index) {
+            public void onClick(CollectionBookBean collBookBean, int index) {
                 Intent intent = new Intent(getActivity(), ReadActivity.class);
 
                 intent.putExtra(ReadActivity.EXTRA_COLL_BOOK, collBookBean);
@@ -153,7 +151,7 @@ public class BookCollectionFragment extends BaseFragment<IMainPresenter> impleme
             }
 
             @Override
-            public void onLongClick(View animView, CollBookBean bookShelfBean, int index) {
+            public void onLongClick(View animView, CollectionBookBean bookShelfBean, int index) {
                 Intent intent = new Intent(getActivity(), BookDetailActivity.class);
                 intent.putExtra("from", BookDetailPresenterImpl.FROM_BOOKSHELF);
                 String key = String.valueOf(System.currentTimeMillis());
@@ -192,7 +190,7 @@ public class BookCollectionFragment extends BaseFragment<IMainPresenter> impleme
 
 
     @Override
-    public void refreshBookShelf(List<CollBookBean> bookShelfBeanList) {
+    public void refreshBookShelf(List<CollectionBookBean> bookShelfBeanList) {
         bookShelfAdapter.replaceAll(bookShelfBeanList);
     }
 

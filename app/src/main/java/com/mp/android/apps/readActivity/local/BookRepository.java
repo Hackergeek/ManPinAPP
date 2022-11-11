@@ -4,11 +4,11 @@ import android.util.Log;
 
 import com.mp.android.apps.book.bean.DownloadTaskBean;
 import com.mp.android.apps.book.dao.BookChapterBeanDao;
-import com.mp.android.apps.book.dao.CollBookBeanDao;
+import com.mp.android.apps.book.dao.CollectionBookBeanDao;
 import com.mp.android.apps.readActivity.bean.BookChapterBean;
 import com.mp.android.apps.readActivity.bean.BookRecordBean;
 import com.mp.android.apps.readActivity.bean.ChapterInfoBean;
-import com.mp.android.apps.readActivity.bean.CollBookBean;
+import com.mp.android.apps.readActivity.bean.CollectionBookBean;
 import com.mp.android.apps.book.dao.BookRecordBeanDao;
 import com.mp.android.apps.book.dao.DaoSession;
 import com.mp.android.apps.readActivity.utils.BookManager;
@@ -40,12 +40,12 @@ public class BookRepository {
     private static final String TAG = "CollBookManager";
     private static volatile BookRepository sInstance;
     private DaoSession mSession;
-    private CollBookBeanDao mCollBookDao;
+    private CollectionBookBeanDao mCollBookDao;
 
     private BookRepository() {
         mSession = DaoDbHelper.getInstance()
                 .getSession();
-        mCollBookDao = mSession.getCollBookBeanDao();
+        mCollBookDao = mSession.getCollectionBookBeanDao();
     }
 
     public static BookRepository getInstance() {
@@ -60,7 +60,7 @@ public class BookRepository {
     }
 
     //存储已收藏书籍
-    public void saveCollBookWithAsync(CollBookBean bean) {
+    public void saveCollBookWithAsync(CollectionBookBean bean) {
         //启动异步存储
         mSession.startAsyncSession()
                 .runInTx(
@@ -87,11 +87,11 @@ public class BookRepository {
      *
      * @param beans
      */
-    public void saveCollBooksWithAsync(List<CollBookBean> beans) {
+    public void saveCollBooksWithAsync(List<CollectionBookBean> beans) {
         mSession.startAsyncSession()
                 .runInTx(
                         () -> {
-                            for (CollBookBean bean : beans) {
+                            for (CollectionBookBean bean : beans) {
                                 if (bean.getBookChapters() != null) {
                                     //存储BookChapterBean(需要修改，如果存在id相同的则无视)
                                     mSession.getBookChapterBeanDao()
@@ -104,11 +104,11 @@ public class BookRepository {
                 );
     }
 
-    public void saveCollBook(CollBookBean bean) {
+    public void saveCollBook(CollectionBookBean bean) {
         mCollBookDao.insertOrReplace(bean);
     }
 
-    public void saveCollBooks(List<CollBookBean> beans) {
+    public void saveCollBooks(List<CollectionBookBean> beans) {
         mCollBookDao.insertOrReplaceInTx(beans);
     }
 
@@ -156,18 +156,18 @@ public class BookRepository {
     }
 
     /*****************************get************************************************/
-    public CollBookBean getCollBook(String bookId) {
-        CollBookBean bean = mCollBookDao.queryBuilder()
-                .where(CollBookBeanDao.Properties._id.eq(bookId))
+    public CollectionBookBean getCollBook(String bookId) {
+        CollectionBookBean bean = mCollBookDao.queryBuilder()
+                .where(CollectionBookBeanDao.Properties._id.eq(bookId))
                 .unique();
         return bean;
     }
 
 
-    public List<CollBookBean> getCollBooks() {
+    public List<CollectionBookBean> getCollBooks() {
         return mCollBookDao
                 .queryBuilder()
-                .orderDesc(CollBookBeanDao.Properties.LastRead)
+                .orderDesc(CollectionBookBeanDao.Properties.LastRead)
                 .list();
     }
 
@@ -230,7 +230,7 @@ public class BookRepository {
      * @param book
      * @return
      */
-    public String getRecordBookChapterTitle(CollBookBean book) {
+    public String getRecordBookChapterTitle(CollectionBookBean book) {
         BookRecordBean bookRecordBeans = mSession.getBookRecordBeanDao().queryBuilder().where(BookRecordBeanDao.Properties.BookId.eq(book.get_id())).unique();
         if (bookRecordBeans != null) {
             BookChapterBean currentBookChapterBean = null;
@@ -260,7 +260,7 @@ public class BookRepository {
      * @param bean
      * @return
      */
-    public Single<Void> deleteCollBookInRx(CollBookBean bean) {
+    public Single<Void> deleteCollBookInRx(CollectionBookBean bean) {
         return Single.create(new SingleOnSubscribe<Void>() {
             @Override
             public void subscribe(SingleEmitter<Void> e) throws Exception {
@@ -284,7 +284,7 @@ public class BookRepository {
      *
      * @param bean
      */
-    public void deleteCollBookSync(CollBookBean bean) {
+    public void deleteCollBookSync(CollectionBookBean bean) {
         //删除书籍
         mCollBookDao.delete(bean);
         //删除目录

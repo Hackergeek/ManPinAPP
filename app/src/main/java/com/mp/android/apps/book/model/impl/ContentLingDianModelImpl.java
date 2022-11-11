@@ -3,14 +3,13 @@ package com.mp.android.apps.book.model.impl;
 
 import com.google.android.apps.photolab.storyboard.download.MD5Utils;
 import com.mp.android.apps.book.base.MBaseModelImpl;
-import com.mp.android.apps.book.base.observer.SimpleObserver;
 import com.mp.android.apps.book.bean.SearchBookBean;
 import com.mp.android.apps.book.common.api.ILingDianAPI;
 import com.mp.android.apps.book.model.IReaderBookModel;
 import com.mp.android.apps.book.model.ObtainBookInfoUtils;
 import com.mp.android.apps.readActivity.bean.BookChapterBean;
 import com.mp.android.apps.readActivity.bean.ChapterInfoBean;
-import com.mp.android.apps.readActivity.bean.CollBookBean;
+import com.mp.android.apps.readActivity.bean.CollectionBookBean;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -27,13 +26,9 @@ import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.ObservableSource;
 import io.reactivex.Single;
 import io.reactivex.SingleEmitter;
-import io.reactivex.SingleObserver;
 import io.reactivex.SingleOnSubscribe;
 import io.reactivex.SingleSource;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * 零点小说源
@@ -57,38 +52,35 @@ public class ContentLingDianModelImpl extends MBaseModelImpl implements IReaderB
     }
 
     public Observable<List<SearchBookBean>> analySearchBook(final String s) {
-        return Observable.create(new ObservableOnSubscribe<List<SearchBookBean>>() {
-            @Override
-            public void subscribe(ObservableEmitter<List<SearchBookBean>> e) throws Exception {
-                try {
-                    Document doc = Jsoup.parse(s);
-                    Elements booksE = doc.getElementsByClass("txt-list").get(0).getElementsByTag("li");
-                    if (null != booksE && booksE.size() > 1) {
-                        List<SearchBookBean> books = new ArrayList<SearchBookBean>();
-                        for (int i = 1; i < booksE.size(); i++) {
-                            SearchBookBean item = new SearchBookBean();
-                            item.setTag(TAG);
-                            item.setAuthor(booksE.get(i).getElementsByClass("s4").get(0).text());
-                            item.setKind(booksE.get(i).getElementsByClass("s1").get(0).text());
-                            item.setLastChapter(booksE.get(i).getElementsByClass("s3").get(0).getElementsByTag("a").get(0).text());
-                            item.setOrigin("soudu.org");
-                            item.setName(booksE.get(i).getElementsByClass("s2").get(0).getElementsByTag("a").get(0).text());
-                            item.setNoteUrl(TAG + booksE.get(i).getElementsByClass("s2").get(0).getElementsByTag("a").get(0).attr("href"));
-                            item.setCoverUrl("noimage");
-                            item.setUpdated(booksE.get(i).getElementsByClass("s5").get(0).text());
-                            item.setLastChapter(booksE.get(i).getElementsByClass("s3").get(0).getElementsByTag("a").get(0).text());
-                            books.add(item);
-                        }
-                        e.onNext(books);
-                    } else {
-                        e.onNext(new ArrayList<SearchBookBean>());
+        return Observable.create(e -> {
+            try {
+                Document doc = Jsoup.parse(s);
+                Elements booksE = doc.getElementsByClass("txt-list").get(0).getElementsByTag("li");
+                if (null != booksE && booksE.size() > 1) {
+                    List<SearchBookBean> books = new ArrayList<SearchBookBean>();
+                    for (int i = 1; i < booksE.size(); i++) {
+                        SearchBookBean item = new SearchBookBean();
+                        item.setTag(TAG);
+                        item.setAuthor(booksE.get(i).getElementsByClass("s4").get(0).text());
+                        item.setKind(booksE.get(i).getElementsByClass("s1").get(0).text());
+                        item.setLastChapter(booksE.get(i).getElementsByClass("s3").get(0).getElementsByTag("a").get(0).text());
+                        item.setOrigin("soudu.org");
+                        item.setName(booksE.get(i).getElementsByClass("s2").get(0).getElementsByTag("a").get(0).text());
+                        item.setNoteUrl(TAG + booksE.get(i).getElementsByClass("s2").get(0).getElementsByTag("a").get(0).attr("href"));
+                        item.setCoverUrl("noimage");
+                        item.setUpdated(booksE.get(i).getElementsByClass("s5").get(0).text());
+                        item.setLastChapter(booksE.get(i).getElementsByClass("s3").get(0).getElementsByTag("a").get(0).text());
+                        books.add(item);
                     }
-                } catch (Exception ex) {
-                    ex.printStackTrace();
+                    e.onNext(books);
+                } else {
                     e.onNext(new ArrayList<SearchBookBean>());
                 }
-                e.onComplete();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                e.onNext(new ArrayList<SearchBookBean>());
             }
+            e.onComplete();
         });
     }
 
@@ -96,20 +88,20 @@ public class ContentLingDianModelImpl extends MBaseModelImpl implements IReaderB
 
 
     @Override
-    public Observable<CollBookBean> getBookInfo(CollBookBean collBookBean) {
-        return getRetrofitObject(TAG).create(ILingDianAPI.class).getBookInfo(collBookBean.get_id().replace(TAG, "")).flatMap(new Function<String, ObservableSource<CollBookBean>>() {
+    public Observable<CollectionBookBean> getBookInfo(CollectionBookBean collBookBean) {
+        return getRetrofitObject(TAG).create(ILingDianAPI.class).getBookInfo(collBookBean.get_id().replace(TAG, "")).flatMap(new Function<String, ObservableSource<CollectionBookBean>>() {
             @Override
-            public ObservableSource<CollBookBean> apply(String s) throws Exception {
+            public ObservableSource<CollectionBookBean> apply(String s) throws Exception {
                 return analyBookInfo(s, collBookBean);
             }
         });
 
     }
 
-    private Observable<CollBookBean> analyBookInfo(final String s, final CollBookBean collBookBean) {
-        return Observable.create(new ObservableOnSubscribe<CollBookBean>() {
+    private Observable<CollectionBookBean> analyBookInfo(final String s, final CollectionBookBean collBookBean) {
+        return Observable.create(new ObservableOnSubscribe<CollectionBookBean>() {
             @Override
-            public void subscribe(ObservableEmitter<CollBookBean> e) throws Exception {
+            public void subscribe(ObservableEmitter<CollectionBookBean> e) throws Exception {
                 collBookBean.setBookTag(TAG);
                 Document doc = Jsoup.parse(s);
                 Element resultE = doc.getElementsByClass("detail-box").get(0);
@@ -150,7 +142,7 @@ public class ContentLingDianModelImpl extends MBaseModelImpl implements IReaderB
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-    public Single<List<BookChapterBean>> getBookChapters(CollBookBean collBookBean) {
+    public Single<List<BookChapterBean>> getBookChapters(CollectionBookBean collBookBean) {
         return getRetrofitObject(TAG).create(ILingDianAPI.class).getChapterLists(collBookBean.getBookChapterUrl())
                 .flatMap(new Function<String, Single<List<BookChapterBean>>>() {
 
@@ -166,7 +158,7 @@ public class ContentLingDianModelImpl extends MBaseModelImpl implements IReaderB
                 });
     }
 
-    private List<BookChapterBean> analyChapterlist(String s, CollBookBean collBookBean) {
+    private List<BookChapterBean> analyChapterlist(String s, CollectionBookBean collBookBean) {
         List<BookChapterBean> chapterBeans = new ArrayList<BookChapterBean>();
         Document doc = Jsoup.parse(s);
         Elements chapterlist = doc.getElementsByClass("section-list").get(1).getElementsByTag("li");

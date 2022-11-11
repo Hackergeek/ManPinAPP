@@ -5,7 +5,7 @@ import com.mp.android.apps.basemvplib.impl.BasePresenterImpl;
 import com.mp.android.apps.book.presenter.IImportBookPresenter;
 import com.mp.android.apps.book.utils.media.MediaStoreHelper;
 import com.mp.android.apps.book.view.IImportBookView;
-import com.mp.android.apps.readActivity.bean.CollBookBean;
+import com.mp.android.apps.readActivity.bean.CollectionBookBean;
 import com.mp.android.apps.readActivity.local.BookRepository;
 import com.mp.android.apps.readActivity.utils.Constant;
 import com.mp.android.apps.readActivity.utils.StringUtils;
@@ -64,7 +64,7 @@ public class ImportBookPresenterImpl extends BasePresenterImpl<IImportBookView> 
     public void importBooks(List<File> books) {
 
         //转换成CollBook,并存储
-        List<CollBookBean> collBooks = convertCollBook(books);
+        List<CollectionBookBean> collBooks = convertCollBook(books);
         BookRepository.getInstance()
                 .saveCollBooks(collBooks);
         mView.addSuccess();
@@ -81,13 +81,13 @@ public class ImportBookPresenterImpl extends BasePresenterImpl<IImportBookView> 
      * @param files:需要加载的文件列表
      * @return
      */
-    private List<CollBookBean> convertCollBook(List<File> files) {
-        List<CollBookBean> collBooks = new ArrayList<>(files.size());
+    private List<CollectionBookBean> convertCollBook(List<File> files) {
+        List<CollectionBookBean> collBooks = new ArrayList<>(files.size());
         for (File file : files) {
             //判断文件是否存在
             if (!file.exists()) continue;
 
-            CollBookBean collBook = new CollBookBean();
+            CollectionBookBean collBook = new CollectionBookBean();
 //            collBook.set_id(MD5Utils.strToMd5By16(file.getAbsolutePath()));
             collBook.setTitle(file.getName().replace(".txt", ""));
             collBook.setAuthor("");

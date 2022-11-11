@@ -2,7 +2,6 @@
 package com.mp.android.apps.book.model.impl;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -14,7 +13,7 @@ import com.mp.android.apps.book.model.IReaderBookModel;
 import com.mp.android.apps.book.model.ObtainBookInfoUtils;
 import com.mp.android.apps.readActivity.bean.BookChapterBean;
 import com.mp.android.apps.readActivity.bean.ChapterInfoBean;
-import com.mp.android.apps.readActivity.bean.CollBookBean;
+import com.mp.android.apps.readActivity.bean.CollectionBookBean;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -57,46 +56,39 @@ public class ContentSoDuModelImpl extends MBaseModelImpl implements IReaderBookM
         Map<String,String> map=new HashMap<>();
         map.put("searchtype","novelname");
         map.put("searchkey",content);
-        return getRetrofitObject(TAG).create(ISoduApi.class).searchBook(map).flatMap(new Function<String, ObservableSource<List<SearchBookBean>>>() {
-            @Override
-            public ObservableSource<List<SearchBookBean>> apply(String s) throws Exception {
-                return analySearchBook(s);
-            }
-        });
+        return getRetrofitObject(TAG).create(ISoduApi.class).searchBook(map)
+                .flatMap((Function<String, ObservableSource<List<SearchBookBean>>>) s -> parseSearchBook(s));
     }
 
-    public Observable<List<SearchBookBean>> analySearchBook(final String s) {
-        return Observable.create(new ObservableOnSubscribe<List<SearchBookBean>>() {
-            @Override
-            public void subscribe(ObservableEmitter<List<SearchBookBean>> e) throws Exception {
-                try {
-                    Document doc = Jsoup.parse(s);
-                    Elements booksE = doc.getElementsByClass("Look").get(0).getElementsByClass("Search");
-                    if (null != booksE && booksE.size() > 0) {
-                        List<SearchBookBean> books = new ArrayList<SearchBookBean>();
-                        for (int i = 0; i < booksE.size(); i++) {
-                            SearchBookBean item = new SearchBookBean();
-                            item.setTag(TAG);
-                            item.setAuthor(booksE.get(i).getElementsByClass("Search_title").get(0).getElementsByTag("span").get(1).text());
+    public Observable<List<SearchBookBean>> parseSearchBook(final String s) {
+        return Observable.create(e -> {
+            try {
+                Document doc = Jsoup.parse(s);
+                Elements booksE = doc.getElementsByClass("Look").get(0).getElementsByClass("Search");
+                if (null != booksE && booksE.size() > 0) {
+                    List<SearchBookBean> books = new ArrayList<SearchBookBean>();
+                    for (int i = 0; i < booksE.size(); i++) {
+                        SearchBookBean item = new SearchBookBean();
+                        item.setTag(TAG);
+                        item.setAuthor(booksE.get(i).getElementsByClass("Search_title").get(0).getElementsByTag("span").get(1).text());
 //                            item.setKind(booksE.get(i).getElementsByClass("s2").get(0).text());
-                            item.setLastChapter(booksE.get(i).getElementsByClass("Search_update").get(0).getElementsByTag("a").get(0).text());
-                            item.setOrigin(Origin);
-                            item.setName(booksE.get(i).getElementsByClass("Search_title").get(0).getElementsByTag("span").get(0).getElementsByTag("a").get(0).text());
-                            item.setNoteUrl(TAG + booksE.get(i).getElementsByClass("Search_title").get(0).getElementsByTag("span").get(0).getElementsByTag("a").get(0).attr("href"));
-                            item.setCoverUrl(TAG + booksE.get(i).getElementsByClass("Search_tuku").get(0).getElementsByTag("img").get(0).attr("src"));
-                            item.setUpdated(booksE.get(i).getElementsByClass("Search_update").get(0).text());
-                            books.add(item);
-                        }
-                        e.onNext(books);
-                    } else {
-                        e.onNext(new ArrayList<SearchBookBean>());
+                        item.setLastChapter(booksE.get(i).getElementsByClass("Search_update").get(0).getElementsByTag("a").get(0).text());
+                        item.setOrigin(Origin);
+                        item.setName(booksE.get(i).getElementsByClass("Search_title").get(0).getElementsByTag("span").get(0).getElementsByTag("a").get(0).text());
+                        item.setNoteUrl(TAG + booksE.get(i).getElementsByClass("Search_title").get(0).getElementsByTag("span").get(0).getElementsByTag("a").get(0).attr("href"));
+                        item.setCoverUrl(TAG + booksE.get(i).getElementsByClass("Search_tuku").get(0).getElementsByTag("img").get(0).attr("src"));
+                        item.setUpdated(booksE.get(i).getElementsByClass("Search_update").get(0).text());
+                        books.add(item);
                     }
-                } catch (Exception ex) {
-                    ex.printStackTrace();
+                    e.onNext(books);
+                } else {
                     e.onNext(new ArrayList<SearchBookBean>());
                 }
-                e.onComplete();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                e.onNext(new ArrayList<SearchBookBean>());
             }
+            e.onComplete();
         });
     }
 
@@ -104,20 +96,20 @@ public class ContentSoDuModelImpl extends MBaseModelImpl implements IReaderBookM
 
 
     @Override
-    public Observable<CollBookBean> getBookInfo(CollBookBean collBookBean) {
-        return getRetrofitObject(TAG).create(ISoduApi.class).getBookInfo(collBookBean.get_id().replace(TAG, "")).flatMap(new Function<String, ObservableSource<CollBookBean>>() {
+    public Observable<CollectionBookBean> getBookInfo(CollectionBookBean collBookBean) {
+        return getRetrofitObject(TAG).create(ISoduApi.class).getBookInfo(collBookBean.get_id().replace(TAG, "")).flatMap(new Function<String, ObservableSource<CollectionBookBean>>() {
             @Override
-            public ObservableSource<CollBookBean> apply(String s) throws Exception {
+            public ObservableSource<CollectionBookBean> apply(String s) throws Exception {
                 return analyBookInfo(s, collBookBean);
             }
         });
 
     }
 
-    private Observable<CollBookBean> analyBookInfo(final String s, final CollBookBean collBookBean) {
-        return Observable.create(new ObservableOnSubscribe<CollBookBean>() {
+    private Observable<CollectionBookBean> analyBookInfo(final String s, final CollectionBookBean collBookBean) {
+        return Observable.create(new ObservableOnSubscribe<CollectionBookBean>() {
             @Override
-            public void subscribe(ObservableEmitter<CollBookBean> e) throws Exception {
+            public void subscribe(ObservableEmitter<CollectionBookBean> e) throws Exception {
                 collBookBean.setBookTag(TAG);
                 Document doc = Jsoup.parse(s);
                 Element resultE = doc.getElementsByClass("Look").get(0);
@@ -148,7 +140,7 @@ public class ContentSoDuModelImpl extends MBaseModelImpl implements IReaderBookM
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-    public Single<List<BookChapterBean>> getBookChapters(CollBookBean collBookBean) {
+    public Single<List<BookChapterBean>> getBookChapters(CollectionBookBean collBookBean) {
         return getRetrofitObject(TAG).create(ISoduApi.class).getChapterLists(collBookBean.getBookChapterUrl())
                 .flatMap(new Function<String, Single<List<BookChapterBean>>>() {
 
@@ -164,7 +156,7 @@ public class ContentSoDuModelImpl extends MBaseModelImpl implements IReaderBookM
                 });
     }
 
-    private List<BookChapterBean> analyChapterlist(String s, CollBookBean collBookBean) {
+    private List<BookChapterBean> analyChapterlist(String s, CollectionBookBean collBookBean) {
 
 
             Document doc = Jsoup.parse(s);

@@ -1,22 +1,18 @@
 package com.mp.android.apps.book.presenter.impl;
 
-import android.content.Context;
 import android.widget.Toast;
 
 import com.hwangjr.rxbus.RxBus;
 import com.mp.android.apps.MyApplication;
-import com.mp.android.apps.basemvplib.IView;
-import com.mp.android.apps.basemvplib.impl.BaseActivity;
 import com.mp.android.apps.book.base.observer.SimpleObserver;
 import com.mp.android.apps.book.common.RxBusTag;
 import com.mp.android.apps.book.model.WebBookModelControl;
 import com.mp.android.apps.readActivity.bean.BookChapterBean;
-import com.mp.android.apps.readActivity.bean.CollBookBean;
+import com.mp.android.apps.readActivity.bean.CollectionBookBean;
 import com.mp.android.apps.readActivity.local.BookRepository;
 import com.mp.android.apps.readActivity.local.DaoDbHelper;
 import com.mp.android.apps.readActivity.utils.Constant;
 import com.mp.android.apps.readActivity.utils.StringUtils;
-import com.trello.rxlifecycle2.android.ActivityEvent;
 
 import java.util.List;
 
@@ -49,7 +45,7 @@ public class BookShelUtils {
      *
      * @param collBookBean
      */
-    public void addToBookShelfUtils(CollBookBean collBookBean) {
+    public void addToBookShelfUtils(CollectionBookBean collBookBean) {
         WebBookModelControl.getInstance().getBookChapters(collBookBean)
                 .toObservable()
                 .flatMap(new Function<List<BookChapterBean>, ObservableSource<Boolean>>() {
@@ -100,7 +96,7 @@ public class BookShelUtils {
                 });
     }
 
-    public Observable<CollBookBean>  getBookInfoUtils(CollBookBean collBookBean){
+    public Observable<CollectionBookBean>  getBookInfoUtils(CollectionBookBean collBookBean){
         return WebBookModelControl.getInstance().getBookInfo(collBookBean);
 
     }

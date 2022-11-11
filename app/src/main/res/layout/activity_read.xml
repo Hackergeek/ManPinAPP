@@ -74,8 +74,8 @@
                     android:layout_marginLeft="20dp"
                     android:clickable="true"
                     android:drawableTop="@drawable/icon_download_main_pre"
-                    android:text="下载"
                     android:gravity="center"
+                    android:text="下载"
                     android:textColor="#CBCBCB"
                     android:textSize="10sp" />
 
@@ -179,12 +179,6 @@
                     android:textColor="#CBCBCB"
                     android:textSize="12sp" />
 
-                <!--                <TextView
-                                    style="@style/NB.Theme.TextAppearance.Read.BottomMenu.Button"
-                                    android:id="@+id/read_tv_download"
-                                    android:drawableTop="@drawable/ic_read_menu_download"
-                                    android:text="@string/nb.read.download" />-->
-
                 <TextView
                     android:id="@+id/read_tv_setting"
                     android:layout_width="0dp"
@@ -228,9 +222,7 @@
                 android:id="@+id/read_iv_category"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scrollbars="vertical">
-
-            </ListView>
+                android:scrollbars="vertical"/>
         </RelativeLayout>
     </LinearLayout>
 </androidx.drawerlayout.widget.DrawerLayout>

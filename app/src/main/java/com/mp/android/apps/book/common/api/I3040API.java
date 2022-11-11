@@ -21,7 +21,7 @@ public interface I3040API {
             "Accept-Charset:UTF-8",
             "Connection:close",
             "Cache-Control:no-cache"})
-    Observable<String> searchBook(@Query("a") String a,@Query("keyword") String keyword);
+    Observable<String> searchBook(@Query("a") String a, @Query("keyword") String keyword);
 
 
     @GET

@@ -3,7 +3,7 @@ package com.mp.android.apps.book.model;
 import com.mp.android.apps.book.bean.SearchBookBean;
 import com.mp.android.apps.readActivity.bean.BookChapterBean;
 import com.mp.android.apps.readActivity.bean.ChapterInfoBean;
-import com.mp.android.apps.readActivity.bean.CollBookBean;
+import com.mp.android.apps.readActivity.bean.CollectionBookBean;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ public interface IReaderBookModel {
      * @param collBookBean
      * @return
      */
-    Observable<CollBookBean> getBookInfo(CollBookBean collBookBean);
+    Observable<CollectionBookBean> getBookInfo(CollectionBookBean collBookBean);
 
     /**
      * 获取图书章节
@@ -35,7 +35,7 @@ public interface IReaderBookModel {
      * @param collBookBean
      * @return
      */
-    Single<List<BookChapterBean>> getBookChapters(CollBookBean collBookBean);
+    Single<List<BookChapterBean>> getBookChapters(CollectionBookBean collBookBean);
 
     /**
      * 获取当前章节详细内容

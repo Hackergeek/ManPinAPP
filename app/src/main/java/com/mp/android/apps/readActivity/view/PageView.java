@@ -9,7 +9,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 
-import com.mp.android.apps.readActivity.bean.CollBookBean;
+import com.mp.android.apps.readActivity.bean.CollectionBookBean;
 import com.mp.android.apps.readActivity.view.animation.CoverPageAnim;
 import com.mp.android.apps.readActivity.view.animation.HorizonPageAnim;
 import com.mp.android.apps.readActivity.view.animation.NonePageAnim;
@@ -347,7 +347,7 @@ public class PageView extends View {
      * @param collBook
      * @return
      */
-    public PageLoader getPageLoader(CollBookBean collBook) {
+    public PageLoader getPageLoader(CollectionBookBean collBook) {
         // 判是否已经存在
         if (mPageLoader != null) {
             return mPageLoader;

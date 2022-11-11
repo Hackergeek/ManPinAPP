@@ -104,7 +104,7 @@ public class LauncherView extends RelativeLayout {
     }
 
 
-    public void start(lanucherFinshImpl lanucherFinsh) {
+    public void start(LauncherFinishedImpl lanucherFinsh) {
         init();
         initPath();
         setAnimation(red, redPath1);
@@ -208,7 +208,7 @@ public class LauncherView extends RelativeLayout {
     }
 
 
-    private void showLogo(lanucherFinshImpl lanucherFinsh) {
+    private void showLogo(LauncherFinishedImpl lanucherFinsh) {
         View view = View.inflate(getContext(), R.layout.widget_load_view, this);
         View logo = view.findViewById(R.id.iv_logo);
         final View slogo = view.findViewById(R.id.iv_slogo);

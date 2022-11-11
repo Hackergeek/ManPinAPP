@@ -36,13 +36,13 @@
 
         <activity android:name=".SettingAboutActivity" />
 
-        <activity android:name=".book.view.impl.MoreSettingActivity"/>
+        <activity android:name=".book.view.impl.MoreSettingActivity" />
         <activity
             android:name=".readActivity.ReadActivity"
             android:resizeableActivity="false"
 
             />
-        <activity android:name=".book.view.impl.BookRankListActivity"/>
+        <activity android:name=".book.view.impl.BookRankListActivity" />
         <activity android:name=".book.view.impl.BookSourceActivity" />
         <activity android:name=".book.view.impl.BookSourceGuideActivity" />
 
@@ -108,8 +108,7 @@
             android:name=".book.contentprovider.MyContentProvider"
             android:authorities="com.mp.android.apps.download.provider"
             android:exported="false"
-            android:grantUriPermissions="true"
-            >
+            android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />

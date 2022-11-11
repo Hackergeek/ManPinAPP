@@ -2,10 +2,11 @@ package com.mp.android.apps.readActivity.local;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+
 import com.github.yuweiguocn.library.greendao.MigrationHelper;
 import com.mp.android.apps.book.dao.BookChapterBeanDao;
 import com.mp.android.apps.book.dao.BookRecordBeanDao;
-import com.mp.android.apps.book.dao.CollBookBeanDao;
+import com.mp.android.apps.book.dao.CollectionBookBeanDao;
 import com.mp.android.apps.book.dao.DaoMaster;
 import com.mp.android.apps.book.dao.DownloadTaskBeanDao;
 import com.mp.android.apps.book.dao.SearchHistoryBeanDao;
@@ -38,7 +39,7 @@ public class UpgradeOpenHelper extends DaoMaster.DevOpenHelper {
                 },
                 BookChapterBeanDao.class,
                 BookRecordBeanDao.class,
-                CollBookBeanDao.class,
+                CollectionBookBeanDao.class,
                 DownloadTaskBeanDao.class,
                 SearchHistoryBeanDao.class
         );

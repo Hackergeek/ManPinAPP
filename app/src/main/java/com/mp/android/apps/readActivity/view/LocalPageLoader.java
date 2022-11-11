@@ -3,7 +3,7 @@ package com.mp.android.apps.readActivity.view;
 
 import com.google.android.apps.photolab.storyboard.download.MD5Utils;
 import com.mp.android.apps.readActivity.bean.BookChapterBean;
-import com.mp.android.apps.readActivity.bean.CollBookBean;
+import com.mp.android.apps.readActivity.bean.CollectionBookBean;
 import com.mp.android.apps.readActivity.local.BookRepository;
 import com.mp.android.apps.readActivity.utils.Charset;
 import com.mp.android.apps.readActivity.utils.Constant;
@@ -64,7 +64,7 @@ public class LocalPageLoader extends PageLoader {
 
     private Disposable mChapterDisp = null;
 
-    public LocalPageLoader(PageView pageView, CollBookBean collBook) {
+    public LocalPageLoader(PageView pageView, CollectionBookBean collBook) {
         super(pageView, collBook);
         mStatus = STATUS_PARING;
     }
