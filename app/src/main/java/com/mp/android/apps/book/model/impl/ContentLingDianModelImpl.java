@@ -21,8 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.ObservableSource;
 import io.reactivex.Single;
 import io.reactivex.SingleEmitter;
@@ -43,15 +41,11 @@ public class ContentLingDianModelImpl extends MBaseModelImpl implements IReaderB
     ////////////////////////////////////////////////////////////////////////////////////////////////////////
     @Override
     public Observable<List<SearchBookBean>> searchBook(String content, int page) {
-        return getRetrofitObject(TAG).create(ILingDianAPI.class).searchBook(content).flatMap(new Function<String, ObservableSource<List<SearchBookBean>>>() {
-            @Override
-            public ObservableSource<List<SearchBookBean>> apply(String s) throws Exception {
-                return analySearchBook(s);
-            }
-        });
+        return getRetrofitObject(TAG).create(ILingDianAPI.class).searchBook(content)
+                .flatMap((Function<String, ObservableSource<List<SearchBookBean>>>) s -> parseSearchBook(s));
     }
 
-    public Observable<List<SearchBookBean>> analySearchBook(final String s) {
+    public Observable<List<SearchBookBean>> parseSearchBook(final String s) {
         return Observable.create(e -> {
             try {
                 Document doc = Jsoup.parse(s);
@@ -99,44 +93,41 @@ public class ContentLingDianModelImpl extends MBaseModelImpl implements IReaderB
     }
 
     private Observable<CollectionBookBean> analyBookInfo(final String s, final CollectionBookBean collBookBean) {
-        return Observable.create(new ObservableOnSubscribe<CollectionBookBean>() {
-            @Override
-            public void subscribe(ObservableEmitter<CollectionBookBean> e) throws Exception {
-                collBookBean.setBookTag(TAG);
-                Document doc = Jsoup.parse(s);
-                Element resultE = doc.getElementsByClass("detail-box").get(0);
-                collBookBean.set_id(collBookBean.get_id());
-                collBookBean.setCover(resultE.getElementsByClass("imgbox").get(0).getElementsByTag("img").get(0).attr("src"));
-                Element info= resultE.getElementsByClass("info").get(0);
-                collBookBean.setTitle(info.getElementsByClass("top").get(0).getElementsByTag("h1").get(0).text());
-                String author = resultE.getElementsByClass("fix").get(0).getElementsByTag("p").get(0).text().toString().trim();
-                author = author.replace(" ", "").replace("  ", "").replace("作者：", "");
-                collBookBean.setAuthor(author);
+        return Observable.create(e -> {
+            collBookBean.setBookTag(TAG);
+            Document doc = Jsoup.parse(s);
+            Element resultE = doc.getElementsByClass("detail-box").get(0);
+            collBookBean.set_id(collBookBean.get_id());
+            collBookBean.setCover(resultE.getElementsByClass("imgbox").get(0).getElementsByTag("img").get(0).attr("src"));
+            Element info = resultE.getElementsByClass("info").get(0);
+            collBookBean.setTitle(info.getElementsByClass("top").get(0).getElementsByTag("h1").get(0).text());
+            String author = resultE.getElementsByClass("fix").get(0).getElementsByTag("p").get(0).text().toString().trim();
+            author = author.replace(" ", "").replace("  ", "").replace("作者：", "");
+            collBookBean.setAuthor(author);
 
-                List<TextNode> contentEs = resultE.getElementsByClass("desc").get(0).textNodes();
-                StringBuilder content = new StringBuilder();
-                for (int i = 0; i < contentEs.size(); i++) {
-                    String temp = contentEs.get(i).text().trim();
-                    temp = temp.replaceAll(" ", "").replaceAll(" ", "");
-                    if (temp.length() > 0) {
-                        content.append("\u3000\u3000" + temp);
-                        if (i < contentEs.size() - 1) {
-                            content.append("\r\n");
-                        }
+            List<TextNode> contentEs = resultE.getElementsByClass("desc").get(0).textNodes();
+            StringBuilder content = new StringBuilder();
+            for (int i = 0; i < contentEs.size(); i++) {
+                String temp = contentEs.get(i).text().trim();
+                temp = temp.replaceAll(" ", "").replaceAll(" ", "");
+                if (temp.length() > 0) {
+                    content.append("\u3000\u3000" + temp);
+                    if (i < contentEs.size() - 1) {
+                        content.append("\r\n");
                     }
                 }
-                collBookBean.setShortIntro(content.toString());
-
-                collBookBean.setUpdated(resultE.getElementsByClass("fix").get(0).getElementsByTag("p").get(4).text().toString().trim());
-                collBookBean.setBookChapterUrl(collBookBean.get_id());
-                try {
-                    ObtainBookInfoUtils.getInstance().senMessageManpin(collBookBean, "", collBookBean.getLastChapter());
-                } catch (Exception e1) {
-
-                }
-                e.onNext(collBookBean);
-                e.onComplete();
             }
+            collBookBean.setShortIntro(content.toString());
+
+            collBookBean.setUpdated(resultE.getElementsByClass("fix").get(0).getElementsByTag("p").get(4).text().toString().trim());
+            collBookBean.setBookChapterUrl(collBookBean.get_id());
+            try {
+                ObtainBookInfoUtils.getInstance().senMessageManpin(collBookBean, "", collBookBean.getLastChapter());
+            } catch (Exception e1) {
+
+            }
+            e.onNext(collBookBean);
+            e.onComplete();
         });
     }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -144,18 +135,12 @@ public class ContentLingDianModelImpl extends MBaseModelImpl implements IReaderB
 
     public Single<List<BookChapterBean>> getBookChapters(CollectionBookBean collBookBean) {
         return getRetrofitObject(TAG).create(ILingDianAPI.class).getChapterLists(collBookBean.getBookChapterUrl())
-                .flatMap(new Function<String, Single<List<BookChapterBean>>>() {
-
+                .flatMap((Function<String, Single<List<BookChapterBean>>>) s -> Single.create(new SingleOnSubscribe<List<BookChapterBean>>() {
                     @Override
-                    public Single<List<BookChapterBean>> apply(String s) throws Exception {
-                        return Single.create(new SingleOnSubscribe<List<BookChapterBean>>() {
-                            @Override
-                            public void subscribe(SingleEmitter<List<BookChapterBean>> emitter) throws Exception {
-                                emitter.onSuccess(analyChapterlist(s, collBookBean));
-                            }
-                        });
+                    public void subscribe(SingleEmitter<List<BookChapterBean>> emitter) throws Exception {
+                        emitter.onSuccess(analyChapterlist(s, collBookBean));
                     }
-                });
+                }));
     }
 
     private List<BookChapterBean> analyChapterlist(String s, CollectionBookBean collBookBean) {
@@ -187,39 +172,28 @@ public class ContentLingDianModelImpl extends MBaseModelImpl implements IReaderB
     public Single<ChapterInfoBean> getChapterInfo(String url) {
         final StringBuilder[] content = {new StringBuilder()};
         return getRetrofitObject(TAG).create(ILingDianAPI.class).getChapterInfo(url)
-                .flatMap(new Function<String, SingleSource<String>>() {
-                    @Override
-                    public SingleSource<String> apply(String s) throws Exception {
-                        Document doc = Jsoup.parse(s);
-                        String nextTip=doc.getElementsByClass("section-opt").get(1).getElementsByTag("a").get(2).text();
-                        String nextHref=doc.getElementsByClass("section-opt").get(1).getElementsByTag("a").get(2).attr("href");
-                        if ("下一页".equals(nextTip)){
-                            addChapterInfoStr(s, content[0]);
-                            return getRetrofitObject(TAG).create(ILingDianAPI.class).getChapterInfo(nextHref);
-                        }else {
-                            content[0] =new StringBuilder();
-                            return getRetrofitObject(TAG).create(ILingDianAPI.class).getChapterInfo(url);
-                        }
-
+                .flatMap((Function<String, SingleSource<String>>) s -> {
+                    Document doc = Jsoup.parse(s);
+                    String nextTip = doc.getElementsByClass("section-opt").get(1).getElementsByTag("a").get(2).text();
+                    String nextHref = doc.getElementsByClass("section-opt").get(1).getElementsByTag("a").get(2).attr("href");
+                    if ("下一页".equals(nextTip)) {
+                        addChapterInfoStr(s, content[0]);
+                        return getRetrofitObject(TAG).create(ILingDianAPI.class).getChapterInfo(nextHref);
+                    } else {
+                        content[0] = new StringBuilder();
+                        return getRetrofitObject(TAG).create(ILingDianAPI.class).getChapterInfo(url);
                     }
-                }).flatMap(new Function<String, SingleSource<? extends ChapterInfoBean>>() {
-                    @Override
-                    public SingleSource<? extends ChapterInfoBean> apply(String s) throws Exception {
 
-                        return Single.create(new SingleOnSubscribe<ChapterInfoBean>() {
-                            @Override
-                            public void subscribe(SingleEmitter<ChapterInfoBean> emitter) throws Exception {
-                                addChapterInfoStr(s, content[0]);
-                                ChapterInfoBean chapterInfoBean = new ChapterInfoBean();
-                                chapterInfoBean.setBody(content[0].toString());
-                                emitter.onSuccess(chapterInfoBean);
-                            }
-                        });
+                }).flatMap(s -> Single.create(new SingleOnSubscribe<ChapterInfoBean>() {
+                    @Override
+                    public void subscribe(SingleEmitter<ChapterInfoBean> emitter) throws Exception {
+                        addChapterInfoStr(s, content[0]);
+                        ChapterInfoBean chapterInfoBean = new ChapterInfoBean();
+                        chapterInfoBean.setBody(content[0].toString());
+                        emitter.onSuccess(chapterInfoBean);
                     }
-                });
+                }));
     }
-
-
 
 
     @Override
@@ -227,7 +201,7 @@ public class ContentLingDianModelImpl extends MBaseModelImpl implements IReaderB
         return TAG;
     }
 
-    private void addChapterInfoStr(String s,StringBuilder content){
+    private void addChapterInfoStr(String s, StringBuilder content) {
         try {
             Document doc = Jsoup.parse(s);
             List<TextNode> contentEs = doc.getElementById("content").textNodes();

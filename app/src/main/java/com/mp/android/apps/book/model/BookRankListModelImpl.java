@@ -1,12 +1,9 @@
 package com.mp.android.apps.book.model;
 
-import android.graphics.pdf.PdfDocument;
-
 import com.mp.android.apps.book.base.MBaseModelImpl;
 
 import io.reactivex.Observable;
 import retrofit2.http.GET;
-import retrofit2.http.Query;
 import retrofit2.http.Url;
 
 public class BookRankListModelImpl extends MBaseModelImpl {

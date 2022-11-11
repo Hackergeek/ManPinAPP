@@ -27,8 +27,8 @@ public class IMainFragmentModelImpl extends MBaseModelImpl {
      *
      * @return
      */
-    public Observable<String> getHomeDatas() {
-        return getRetrofitObject(TAG).create(IMainFragmentAPI.class).getHomeDatasApi();
+    public Observable<String> getHomeData() {
+        return getRetrofitObject(TAG).create(IMainFragmentAPI.class).getHomeDataApi();
     }
 
     /**
@@ -49,7 +49,7 @@ public class IMainFragmentModelImpl extends MBaseModelImpl {
         Observable<String> getCycleImages();
 
         @GET("/appview/homeViewData")
-        Observable<String> getHomeDatasApi();
+        Observable<String> getHomeDataApi();
 
         @GET("/appview/changByBookKind")
         Observable<String> getContentItemData(@Query("kinds") String kinds);

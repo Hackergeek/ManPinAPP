@@ -3,7 +3,9 @@ package com.mp.android.apps.main.home.view;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+
 import androidx.annotation.Nullable;
+
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.widget.ImageView;

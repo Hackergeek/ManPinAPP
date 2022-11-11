@@ -9,7 +9,7 @@ import com.mp.android.apps.main.home.bean.HomeDesignBean;
 import com.mp.android.apps.main.home.bean.SourceListContent;
 import com.mp.android.apps.main.home.model.IMainFragmentModelImpl;
 import com.mp.android.apps.main.home.presenter.IMainFragmentPresenter;
-import com.mp.android.apps.main.home.view.IMainfragmentView;
+import com.mp.android.apps.main.home.view.IMainFragmentView;
 
 import com.mp.android.apps.basemvplib.impl.BasePresenterImpl;
 import com.mp.android.apps.book.base.observer.SimpleObserver;
@@ -21,7 +21,7 @@ import java.util.List;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
-public class MainFragmentPresenterImpl extends BasePresenterImpl<IMainfragmentView> implements IMainFragmentPresenter {
+public class MainFragmentPresenterImpl extends BasePresenterImpl<IMainFragmentView> implements IMainFragmentPresenter {
     private ACache mCache;
     /**
      * 首页数据缓存
@@ -45,7 +45,7 @@ public class MainFragmentPresenterImpl extends BasePresenterImpl<IMainfragmentVi
         if (!TextUtils.isEmpty(mainCacheJson)) {
             notifyRecyclerViewRefresh(mainCacheJson, true);
         }
-        IMainFragmentModelImpl.getInstance().getHomeDatas().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new SimpleObserver<String>() {
+        IMainFragmentModelImpl.getInstance().getHomeData().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new SimpleObserver<String>() {
             @Override
             public void onNext(String s) {
                 notifyRecyclerViewRefresh(s, false);
@@ -73,11 +73,11 @@ public class MainFragmentPresenterImpl extends BasePresenterImpl<IMainfragmentVi
         JSONObject data = (JSONObject) jsonObject.get("data");
         if (data != null) {
             String carouselJson = JSON.toJSONString(data.get("carouselImages"));
-            String homebookJson = JSON.toJSONString(data.get("homeBook"));
+            String homeBookJson = JSON.toJSONString(data.get("homeBook"));
             String recommendJson = JSON.toJSONString(data.get("recommend"));
-            if (!TextUtils.isEmpty(homebookJson) && !TextUtils.isEmpty(recommendJson) && !TextUtils.isEmpty(carouselJson)) {
+            if (!TextUtils.isEmpty(homeBookJson) && !TextUtils.isEmpty(recommendJson) && !TextUtils.isEmpty(carouselJson)) {
                 List<String> carouselImages = JSON.parseArray(carouselJson, String.class);
-                List<HomeDesignBean> list = JSON.parseArray(homebookJson, HomeDesignBean.class);
+                List<HomeDesignBean> list = JSON.parseArray(homeBookJson, HomeDesignBean.class);
                 List<SourceListContent> recommendList = JSON.parseArray(recommendJson, SourceListContent.class);
                 if (list != null && list.size() > 0
                         && carouselImages != null && carouselImages.size() > 0
@@ -100,7 +100,7 @@ public class MainFragmentPresenterImpl extends BasePresenterImpl<IMainfragmentVi
      * @param kinds
      */
     @Override
-    public void getContentPostion(int mContentPosition, String kinds) {
+    public void getContentPosition(int mContentPosition, String kinds) {
         IMainFragmentModelImpl.getInstance().getContentItemData(kinds).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new SimpleObserver<String>() {
             @Override
             public void onNext(String s) {

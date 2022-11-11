@@ -28,7 +28,6 @@ public interface ILingDianAPI {
     Observable<String> getBookInfo(@Url String url);
 
 
-
     //新版本使用
     @GET
     @Headers({"Accept:text/html,application/xhtml+xml,application/xml",

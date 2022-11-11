@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.ihsanbal.logging.Level;
 import com.ihsanbal.logging.LoggingInterceptor;
 import com.mp.android.apps.BuildConfig;
-import com.mp.android.apps.basemvplib.EncodoConverter;
+import com.mp.android.apps.basemvplib.EncodeConverter;
 
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -16,7 +16,6 @@ import java.util.concurrent.TimeUnit;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
-import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import okhttp3.MediaType;
@@ -90,7 +89,7 @@ public abstract class MBaseModelImpl {
     protected Retrofit getRetrofitString(String url, String encode) {
         return new Retrofit.Builder().baseUrl(url)
                 //增加返回值为字符串的支持(以实体类返回)
-                .addConverterFactory(EncodoConverter.create(encode))
+                .addConverterFactory(EncodeConverter.create(encode))
                 //增加返回值为Oservable<T>的支持
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .client(clientBuilder.build())

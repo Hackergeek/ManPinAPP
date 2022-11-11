@@ -33,19 +33,16 @@ public class MainPresenterImpl extends BasePresenterImpl<IMainView> implements I
         if (needRefresh) {
             mView.activityRefreshView();
         }
-        Observable.create(new ObservableOnSubscribe<List<CollectionBookBean>>() {
-            @Override
-            public void subscribe(ObservableEmitter<List<CollectionBookBean>> e) throws Exception {
-                List<CollectionBookBean> bookShelfes;
-                try {
-                    bookShelfes = BookRepository.getInstance().getCollBooks();
-                } catch (Exception e1) {
-                    bookShelfes = null;
-                }
+        Observable.create((ObservableOnSubscribe<List<CollectionBookBean>>) e -> {
+                    List<CollectionBookBean> bookShelfes;
+                    try {
+                        bookShelfes = BookRepository.getInstance().getCollBooks();
+                    } catch (Exception e1) {
+                        bookShelfes = null;
+                    }
 
-                e.onNext(bookShelfes == null ? new ArrayList<CollectionBookBean>() : bookShelfes);
-            }
-        })
+                    e.onNext(bookShelfes == null ? new ArrayList<CollectionBookBean>() : bookShelfes);
+                })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<List<CollectionBookBean>>() {
@@ -92,13 +89,10 @@ public class MainPresenterImpl extends BasePresenterImpl<IMainView> implements I
     }
 
     private void saveBookToShelf(final List<CollectionBookBean> datas, final int index) {
-        Observable.create(new ObservableOnSubscribe<CollectionBookBean>() {
-            @Override
-            public void subscribe(ObservableEmitter<CollectionBookBean> e) throws Exception {
-                BookRepository.getInstance().saveCollBook(datas.get(index));
-                e.onNext(datas.get(index));
-                e.onComplete();
-            }
+        Observable.create((ObservableOnSubscribe<CollectionBookBean>) e -> {
+            BookRepository.getInstance().saveCollBook(datas.get(index));
+            e.onNext(datas.get(index));
+            e.onComplete();
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleObserver<CollectionBookBean>() {
@@ -136,7 +130,7 @@ public class MainPresenterImpl extends BasePresenterImpl<IMainView> implements I
                     @Tag(RxBusTag.UPDATE_BOOK_PROGRESS)
             }
     )
-    public void hadddOrRemoveBook(CollectionBookBean bookShelfBean) {
+    public void hadAddOrRemoveBook(CollectionBookBean bookShelfBean) {
         queryBookShelf(false);
     }
 }

@@ -8,7 +8,7 @@ import com.mp.android.apps.basemvplib.IView;
 
 import java.util.List;
 
-public interface IMainfragmentView extends IView {
+public interface IMainFragmentView extends IView {
     void notifyRecyclerView(List<HomeDesignBean> list, List<String> carouselImages, List<SourceListContent> listContents, boolean useCache);
 
     void notifyContentItemUpdate(int position, List<SourceListContent> sourceListContents);
